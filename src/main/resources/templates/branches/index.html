@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>TonAdmin - Branches</title>
+
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link
+            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+            rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/css/custom.css}" rel="stylesheet">
+</head>
+
+<body id="page-top">
+
+<div id="wrapper">
+
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <div id="content">
+
+            <div th:replace="~{fragments/topbar :: topbar}"></div>
+
+            <div class="container-fluid">
+
+                <div th:replace="~{fragments/breadcrumb :: breadcrumb(${breadcrumbs})}"></div>
+
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Quản lý chi nhánh</h1>
+
+                    <a th:href="@{/branches/create}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                        <i class="fas fa-plus fa-sm text-white-50"></i>
+                        Thêm chi nhánh
+                    </a>
+                </div>
+
+<!--                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">-->
+<!--                    <span th:text="${successMessage}"></span>-->
+<!--                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">-->
+<!--                        <span aria-hidden="true">&times;</span>-->
+<!--                    </button>-->
+<!--                </div>-->
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold text-primary">Danh sách chi nhánh</h6>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="table-responsive">
+
+                            <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                                <thead class="thead-light">
+                                <tr>
+                                    <th style="width: 120px;">Mã</th>
+                                    <th>Tên chi nhánh</th>
+                                    <th>Địa chỉ</th>
+                                    <th style="width: 150px;">Số điện thoại</th>
+                                    <th style="width: 140px;">Trạng thái</th>
+                                    <th style="width: 160px;">Thao tác</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                <tr th:each="branch : ${branches}">
+                                    <td>
+                                        <span class="font-weight-bold text-primary" th:text="${branch.code}">GL001</span>
+                                    </td>
+
+                                    <td th:text="${branch.name}">Chi nhánh Gia Lai</td>
+
+                                    <td th:text="${branch.address != null ? branch.address : '—'}">Địa chỉ</td>
+
+                                    <td th:text="${branch.phone != null ? branch.phone : '—'}">090...</td>
+
+                                    <td>
+                                        <span th:if="${branch.active}" class="badge badge-success">
+                                            Đang hoạt động
+                                        </span>
+
+                                        <span th:unless="${branch.active}" class="badge badge-secondary">
+                                            Đã khóa
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <a th:href="@{/branches/{id}/edit(id=${branch.id})}"
+                                           class="btn btn-warning btn-sm"
+                                           title="Sửa">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+
+                                        <form th:action="@{/branches/{id}/toggle-active(id=${branch.id})}"
+                                              method="post"
+                                              class="d-inline">
+
+                                            <button type="submit"
+                                                    class="btn btn-sm"
+                                                    th:classappend="${branch.active} ? 'btn-danger' : 'btn-success'"
+                                                    th:title="${branch.active} ? 'Khóa' : 'Mở khóa'">
+
+                                                <i th:class="${branch.active} ? 'fas fa-lock' : 'fas fa-unlock'"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+
+                                <tr th:if="${#lists.isEmpty(branches)}">
+                                    <td colspan="6" class="text-center text-muted">
+                                        Chưa có chi nhánh nào.
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div th:replace="~{fragments/footer :: footer}"></div>
+
+    </div>
+
+</div>
+
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<div th:replace="~{fragments/logoutmodal :: logoutmodal}"></div>
+<div th:replace="~{fragments/loading :: loading}"></div>
+<div th:replace="~{fragments/toast :: toast}"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+
+</body>
+</html>

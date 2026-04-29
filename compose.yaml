@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:17.8
+    container_name: tonadmin-postgres
+    environment:
+      POSTGRES_DB: tonadmin_db
+      POSTGRES_USER: tonadmin_user
+      POSTGRES_PASSWORD: tonadmin_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - tonadmin_postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  tonadmin_postgres_data:

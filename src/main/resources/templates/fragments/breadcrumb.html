@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+<nav th:fragment="breadcrumb(items)" aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb p-0 m-0 bg-transparent">
+        <li th:each="item, stat : ${items}"
+            class="breadcrumb-item small"
+            th:classappend="${stat.last} ? 'active'">
+
+            <a th:if="${!stat.last}"
+               th:href="${item.url}"
+               th:text="${item.label}"
+               class="text-primary">
+                Dashboard
+            </a>
+
+            <span th:if="${stat.last}"
+                  th:text="${item.label}"
+                  class="text-muted">
+                Current
+            </span>
+        </li>
+    </ol>
+</nav>
+</body>
+</html>

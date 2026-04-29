@@ -1,0 +1,19 @@
+.global-loading {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: rgba(255, 255, 255, 0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-box {
+    min-width: 180px;
+    padding: 24px 28px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+    text-align: center;
+    font-weight: 600;
+}
