@@ -1,34 +1,29 @@
 package com.hfing.tonadmin.entities;
 
 import com.hfing.tonadmin.common.BaseEntity;
-import jakarta.persistence.*;
-import lombok.*;
-
-import java.math.BigDecimal;
-
-import com.hfing.tonadmin.common.BaseEntity;
+import com.hfing.tonadmin.common.StockTransactionType;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
 
 @Entity
-@Table(
-        name = "inventories",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"branch_id", "product_id"})
-        }
-)
+@Table(name = "stock_transactions")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Inventory extends BaseEntity {
+public class StockTransaction extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+
+    @Column(nullable = false)
+    private String batchCode;
+
+    private String batchNote;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "branch_id", nullable = false)
@@ -38,7 +33,18 @@ public class Inventory extends BaseEntity {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @Builder.Default
-    private BigDecimal quantity = BigDecimal.ZERO;
+    private StockTransactionType transactionType;
+
+    @Column(nullable = false)
+    private BigDecimal quantity;
+
+    @Column(nullable = false)
+    private BigDecimal beforeQuantity;
+
+    @Column(nullable = false)
+    private BigDecimal afterQuantity;
+
+    private String note;
 }

@@ -32,6 +32,54 @@
         Interface
     </div>
 
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProducts"
+           aria-expanded="true" aria-controls="collapseProducts">
+            <i class="fas fa-fw fa-boxes"></i>
+            <span>Sản phẩm</span>
+        </a>
+
+        <div id="collapseProducts" class="collapse" aria-labelledby="headingProducts" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Quản lý sản phẩm:</h6>
+
+                <a class="collapse-item" th:href="@{/product-categories}">
+                    Danh mục sản phẩm
+                </a>
+
+                <a class="collapse-item" th:href="@{/products}">
+                    Sản phẩm
+                </a>
+            </div>
+        </div>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseInventory"
+           aria-expanded="true" aria-controls="collapseInventory">
+            <i class="fas fa-fw fa-warehouse"></i>
+            <span>Kho hàng</span>
+        </a>
+
+        <div id="collapseInventory" class="collapse" aria-labelledby="headingInventory" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Quản lý kho:</h6>
+
+                <a class="collapse-item" th:href="@{/inventories}">
+                    Tồn kho
+                </a>
+
+                <a class="collapse-item" th:href="@{/inventories/import}">
+                    Nhập kho
+                </a>
+
+                <a class="collapse-item" th:href="@{/inventories/transactions}">
+                    Lịch sử kho
+                </a>
+            </div>
+        </div>
+    </li>
+
     <!-- Nav Item - Pages Collapse Menu -->
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
@@ -114,6 +162,13 @@
         <a class="nav-link" th:href="@{/branches}">
             <i class="fas fa-fw fa-store"></i>
             <span>Chi nhánh</span>
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" th:href="@{/users}">
+            <i class="fas fa-fw fa-users"></i>
+            <span>Người dùng</span>
         </a>
     </li>
 

@@ -36,7 +36,6 @@ public class User extends BaseEntity implements UserDetails {
 
     private String phone;
 
-
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private UserStatus userStatus = UserStatus.ACTIVE;

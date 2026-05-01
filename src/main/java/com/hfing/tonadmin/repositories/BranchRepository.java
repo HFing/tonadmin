@@ -12,4 +12,6 @@ public interface BranchRepository extends JpaRepository<Branch, String> {
     boolean existsByCodeAndIdNot(String code, String id);
 
     List<Branch> findAllByOrderByCreatedAtDesc();
+
+    List<Branch> findByActiveTrueOrderByNameAsc();
 }

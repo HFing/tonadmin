@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>TonAdmin - Create User</title>
+
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/css/custom.css}" rel="stylesheet">
+</head>
+
+<body id="page-top">
+
+<div id="wrapper">
+
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <div id="content">
+
+            <div th:replace="~{fragments/topbar :: topbar}"></div>
+
+            <div class="container-fluid">
+
+                <div th:replace="~{fragments/breadcrumb :: breadcrumb(${breadcrumbs})}"></div>
+
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Thêm người dùng</h1>
+
+                    <a th:href="@{/users}" class="btn btn-sm btn-secondary shadow-sm">
+                        <i class="fas fa-arrow-left fa-sm text-white-50"></i>
+                        Quay lại
+                    </a>
+                </div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Thông tin người dùng</h6>
+                    </div>
+
+                    <div class="card-body">
+
+                        <form th:action="@{/users/create}"
+                              th:object="${userRequest}"
+                              method="post">
+
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Email <span class="text-danger">*</span></label>
+                                    <input type="email"
+                                           th:field="*{email}"
+                                           class="form-control"
+                                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
+                                           placeholder="VD: staff@tonadmin.com">
+
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('email')}"
+                                         th:errors="*{email}">
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label>Mật khẩu <span class="text-danger">*</span></label>
+                                    <input type="password"
+                                           th:field="*{password}"
+                                           class="form-control"
+                                           th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"
+                                           placeholder="Tối thiểu 6 ký tự">
+
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('password')}"
+                                         th:errors="*{password}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Họ <span class="text-danger">*</span></label>
+                                    <input type="text"
+                                           th:field="*{lastName}"
+                                           class="form-control"
+                                           th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid'"
+                                           placeholder="VD: Nguyễn Văn">
+
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('lastName')}"
+                                         th:errors="*{lastName}">
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label>Tên <span class="text-danger">*</span></label>
+                                    <input type="text"
+                                           th:field="*{firstName}"
+                                           class="form-control"
+                                           th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid'"
+                                           placeholder="VD: A">
+
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('firstName')}"
+                                         th:errors="*{firstName}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Số điện thoại</label>
+                                <input type="text"
+                                       th:field="*{phone}"
+                                       class="form-control"
+                                       placeholder="VD: 0901234567">
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label>Quyền <span class="text-danger">*</span></label>
+                                    <select th:field="*{roleType}"
+                                            class="form-control"
+                                            th:classappend="${#fields.hasErrors('roleType')} ? 'is-invalid'">
+                                        <option value="">-- Chọn quyền --</option>
+                                        <option th:each="role : ${roles}"
+                                                th:value="${role}"
+                                                th:text="${role}">
+                                        </option>
+                                    </select>
+
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('roleType')}"
+                                         th:errors="*{roleType}">
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-4">
+                                    <label>Chi nhánh</label>
+                                    <select th:field="*{branchId}"
+                                            class="form-control"
+                                            th:classappend="${#fields.hasErrors('branchId')} ? 'is-invalid'">
+                                        <option value="">-- Không chọn --</option>
+                                        <option th:each="branch : ${branches}"
+                                                th:value="${branch.id}"
+                                                th:text="${branch.name}">
+                                        </option>
+                                    </select>
+
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('branchId')}"
+                                         th:errors="*{branchId}">
+                                    </div>
+
+                                    <small class="form-text text-muted">
+                                        Nhân viên chi nhánh bắt buộc phải chọn chi nhánh.
+                                    </small>
+                                </div>
+
+                                <div class="form-group col-md-4">
+                                    <label>Trạng thái <span class="text-danger">*</span></label>
+                                    <select th:field="*{userStatus}"
+                                            class="form-control"
+                                            th:classappend="${#fields.hasErrors('userStatus')} ? 'is-invalid'">
+                                        <option th:each="status : ${statuses}"
+                                                th:value="${status}"
+                                                th:text="${status}">
+                                        </option>
+                                    </select>
+
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('userStatus')}"
+                                         th:errors="*{userStatus}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                Lưu người dùng
+                            </button>
+
+                            <a th:href="@{/users}" class="btn btn-secondary">
+                                Hủy
+                            </a>
+
+                        </form>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div th:replace="~{fragments/footer :: footer}"></div>
+
+    </div>
+
+</div>
+
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<div th:replace="~{fragments/logoutmodal :: logoutmodal}"></div>
+<div th:replace="~{fragments/loading :: loading}"></div>
+<div th:replace="~{fragments/toast :: toast}"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+
+</body>
+</html>

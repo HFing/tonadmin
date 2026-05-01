@@ -40,4 +40,5 @@ public class Branch extends BaseEntity {
     @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
     @Builder.Default
     private Set<Inventory> inventories = new HashSet<>();
+
 }

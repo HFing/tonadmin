@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>TonAdmin - Inventory</title>
+
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/css/custom.css}" rel="stylesheet">
+</head>
+
+<body id="page-top">
+
+<div id="wrapper">
+
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <div id="content">
+
+            <div th:replace="~{fragments/topbar :: topbar}"></div>
+
+            <div class="container-fluid">
+
+                <div th:replace="~{fragments/breadcrumb :: breadcrumb(${breadcrumbs})}"></div>
+
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <div>
+                        <h1 class="h3 mb-0 text-gray-800">Tồn kho</h1>
+                        <small class="text-muted">
+                            Kiểm tra tồn kho theo chi nhánh và sản phẩm
+                        </small>
+                    </div>
+
+                    <div>
+                        <a th:href="@{/inventories/transactions}"
+                           class="btn btn-sm btn-info shadow-sm mr-2">
+                            <i class="fas fa-history fa-sm text-white-50"></i>
+                            Lịch sử kho
+                        </a>
+
+                        <a th:href="@{/inventories/import}"
+                           class="btn btn-sm btn-primary shadow-sm">
+                            <i class="fas fa-plus fa-sm text-white-50"></i>
+                            Nhập kho
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card shadow mb-4">
+
+                    <div class="card-header py-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                Danh sách tồn kho
+                            </h6>
+
+                            <span class="badge badge-light"
+                                  th:text="${inventoryPage.totalElements + ' dòng'}">
+                                0 dòng
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+
+                        <!-- Compact Filter -->
+                        <form th:action="@{/inventories}" method="get" class="mb-3">
+                            <input type="hidden" name="size" th:value="${inventoryPage.size}">
+
+                            <div class="form-row align-items-center">
+
+                                <div class="col-md-4 mb-2 mb-md-0">
+                                    <select name="branchId" class="form-control form-control-sm">
+                                        <option value="">Tất cả chi nhánh</option>
+                                        <option th:each="branch : ${branches}"
+                                                th:value="${branch.id}"
+                                                th:selected="${branch.id == selectedBranchId}"
+                                                th:text="${branch.name}">
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-5 mb-2 mb-md-0">
+                                    <select name="productId" class="form-control form-control-sm">
+                                        <option value="">Tất cả sản phẩm</option>
+                                        <option th:each="product : ${products}"
+                                                th:value="${product.id}"
+                                                th:selected="${product.id == selectedProductId}"
+                                                th:text="${product.code + ' - ' + product.name}">
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-filter"></i>
+                                        Lọc
+                                    </button>
+
+                                    <a th:href="@{/inventories(size=${inventoryPage.size})}"
+                                       class="btn btn-sm btn-light border">
+                                        Xóa
+                                    </a>
+                                </div>
+
+                            </div>
+                        </form>
+
+                        <div class="table-responsive">
+
+                            <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                                <thead class="thead-light">
+                                <tr>
+                                    <th>Chi nhánh</th>
+                                    <th>Mã sản phẩm</th>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Danh mục</th>
+                                    <th>Đơn vị</th>
+                                    <th class="text-right">Tồn kho</th>
+                                    <th class="text-right">Tồn tối thiểu</th>
+                                    <th>Trạng thái</th>
+                                    <th style="width: 120px;">Thao tác</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                <tr th:each="inventory : ${inventories}">
+                                    <td>
+                                        <span class="font-weight-bold"
+                                              th:text="${inventory.branch != null ? inventory.branch.name : '—'}">
+                                            Chi nhánh
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="font-weight-bold text-primary"
+                                              th:text="${inventory.product != null ? inventory.product.code : '—'}">
+                                            TON001
+                                        </span>
+                                    </td>
+
+                                    <td th:text="${inventory.product != null ? inventory.product.name : '—'}">
+                                        Tôn lạnh
+                                    </td>
+
+                                    <td th:text="${inventory.product != null && inventory.product.category != null ? inventory.product.category.name : '—'}">
+                                        Danh mục
+                                    </td>
+
+                                    <td th:text="${inventory.product != null ? inventory.product.unit : '—'}">
+                                        SHEET
+                                    </td>
+
+                                    <td class="text-right">
+                                        <span class="font-weight-bold"
+                                              th:classappend="${inventory.quantity.compareTo(T(java.math.BigDecimal).ZERO) == 0} ? 'text-danger' : 'text-gray-900'"
+                                              th:text="${#numbers.formatDecimal(inventory.quantity, 0, 'COMMA', 2, 'POINT')}">
+                                            0
+                                        </span>
+                                    </td>
+
+                                    <td class="text-right"
+                                        th:text="${inventory.product != null ? #numbers.formatDecimal(inventory.product.minStock, 0, 'COMMA', 2, 'POINT') : '—'}">
+                                        0
+                                    </td>
+
+                                    <td>
+                                        <span th:if="${inventory.quantity.compareTo(T(java.math.BigDecimal).ZERO) == 0}"
+                                              class="badge badge-danger">
+                                            Hết hàng
+                                        </span>
+
+                                        <span th:if="${inventory.quantity.compareTo(T(java.math.BigDecimal).ZERO) > 0
+                                                      && inventory.product != null
+                                                      && inventory.quantity.compareTo(inventory.product.minStock) <= 0}"
+                                              class="badge badge-warning">
+                                            Sắp hết
+                                        </span>
+
+                                        <span th:if="${inventory.product != null
+                                                      && inventory.quantity.compareTo(inventory.product.minStock) > 0}"
+                                              class="badge badge-success">
+                                            Bình thường
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <a th:href="@{/inventories/transactions(branchId=${inventory.branch.id}, productId=${inventory.product.id})}"
+                                           class="btn btn-info btn-sm"
+                                           title="Xem lịch sử">
+                                            <i class="fas fa-history"></i>
+                                        </a>
+
+                                        <a th:href="@{/inventories/import}"
+                                           class="btn btn-primary btn-sm"
+                                           title="Nhập thêm">
+                                            <i class="fas fa-plus"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+
+                                <tr th:if="${#lists.isEmpty(inventories)}">
+                                    <td colspan="9" class="text-center text-muted">
+                                        Chưa có dữ liệu tồn kho.
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="d-flex justify-content-between align-items-center mt-3"
+                             th:if="${inventoryPage.totalPages > 0}">
+
+                            <small class="text-muted"
+                                   th:text="'Hiển thị ' + ${#lists.size(inventories)} + ' / ' + ${inventoryPage.totalElements} + ' dòng'">
+                                Hiển thị 10 / 100 dòng
+                            </small>
+
+                            <nav th:if="${inventoryPage.totalPages > 1}">
+                                <ul class="pagination pagination-sm mb-0">
+
+                                    <li class="page-item" th:classappend="${inventoryPage.first} ? 'disabled'">
+                                        <a class="page-link"
+                                           th:href="@{/inventories(page=${inventoryPage.number - 1}, size=${inventoryPage.size}, branchId=${selectedBranchId}, productId=${selectedProductId})}">
+                                            Trước
+                                        </a>
+                                    </li>
+
+                                    <li class="page-item"
+                                        th:each="pageNumber : ${#numbers.sequence(0, inventoryPage.totalPages - 1)}"
+                                        th:classappend="${pageNumber == inventoryPage.number} ? 'active'">
+
+                                        <a class="page-link"
+                                           th:href="@{/inventories(page=${pageNumber}, size=${inventoryPage.size}, branchId=${selectedBranchId}, productId=${selectedProductId})}"
+                                           th:text="${pageNumber + 1}">
+                                            1
+                                        </a>
+                                    </li>
+
+                                    <li class="page-item" th:classappend="${inventoryPage.last} ? 'disabled'">
+                                        <a class="page-link"
+                                           th:href="@{/inventories(page=${inventoryPage.number + 1}, size=${inventoryPage.size}, branchId=${selectedBranchId}, productId=${selectedProductId})}">
+                                            Sau
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </nav>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div th:replace="~{fragments/footer :: footer}"></div>
+
+    </div>
+
+</div>
+
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<div th:replace="~{fragments/logoutmodal :: logoutmodal}"></div>
+<div th:replace="~{fragments/loading :: loading}"></div>
+<div th:replace="~{fragments/toast :: toast}"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+
+</body>
+</html>

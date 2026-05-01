@@ -48,6 +48,10 @@
                                     Username hoặc password không đúng.
                                 </div>
 
+                                <div th:if="${param.expired}" class="alert alert-warning">
+                                    Phiên đăng nhập đã hết hạn hoặc tài khoản đã bị đăng xuất.
+                                </div>
+                                
                                 <!-- Hiển thị logout thành công -->
                                 <div th:if="${param.logout}" class="alert alert-success">
                                     Bạn đã đăng xuất thành công.

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>TonAdmin - Create Product Category</title>
+
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/css/custom.css}" rel="stylesheet">
+</head>
+
+<body id="page-top">
+
+<div id="wrapper">
+
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <div id="content">
+
+            <div th:replace="~{fragments/topbar :: topbar}"></div>
+
+            <div class="container-fluid">
+
+                <div th:replace="~{fragments/breadcrumb :: breadcrumb(${breadcrumbs})}"></div>
+
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Thêm danh mục sản phẩm</h1>
+
+                    <a th:href="@{/product-categories}" class="btn btn-sm btn-secondary shadow-sm">
+                        <i class="fas fa-arrow-left fa-sm text-white-50"></i>
+                        Quay lại
+                    </a>
+                </div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Thông tin danh mục</h6>
+                    </div>
+
+                    <div class="card-body">
+
+                        <form th:action="@{/product-categories/create}"
+                              th:object="${categoryRequest}"
+                              method="post">
+
+                            <div class="form-group">
+                                <label>Mã danh mục <span class="text-danger">*</span></label>
+                                <input type="text"
+                                       th:field="*{code}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('code')} ? 'is-invalid'"
+                                       placeholder="VD: TON_LANH">
+
+                                <div class="invalid-feedback"
+                                     th:if="${#fields.hasErrors('code')}"
+                                     th:errors="*{code}">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Tên danh mục <span class="text-danger">*</span></label>
+                                <input type="text"
+                                       th:field="*{name}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'"
+                                       placeholder="VD: Tôn lạnh">
+
+                                <div class="invalid-feedback"
+                                     th:if="${#fields.hasErrors('name')}"
+                                     th:errors="*{name}">
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                Lưu danh mục
+                            </button>
+
+                            <a th:href="@{/product-categories}" class="btn btn-secondary">
+                                Hủy
+                            </a>
+
+                        </form>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div th:replace="~{fragments/footer :: footer}"></div>
+
+    </div>
+
+</div>
+
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<div th:replace="~{fragments/logoutmodal :: logoutmodal}"></div>
+<div th:replace="~{fragments/loading :: loading}"></div>
+<div th:replace="~{fragments/toast :: toast}"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+
+</body>
+</html>

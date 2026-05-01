@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>TonAdmin - Stock Transactions</title>
+
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/css/custom.css}" rel="stylesheet">
+</head>
+
+<body id="page-top">
+
+<div id="wrapper">
+
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <div id="content">
+
+            <div th:replace="~{fragments/topbar :: topbar}"></div>
+
+            <div class="container-fluid">
+
+                <div th:replace="~{fragments/breadcrumb :: breadcrumb(${breadcrumbs})}"></div>
+
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <div>
+                        <h1 class="h3 mb-0 text-gray-800">Lịch sử kho</h1>
+                        <small class="text-muted">
+                            Mỗi dòng tương ứng một lần nhập/chuyển/điều chỉnh kho
+                        </small>
+                    </div>
+
+                    <div>
+                        <a th:href="@{/inventories}" class="btn btn-sm btn-secondary shadow-sm mr-2">
+                            <i class="fas fa-warehouse fa-sm text-white-50"></i>
+                            Tồn kho
+                        </a>
+
+                        <a th:href="@{/inventories/import}" class="btn btn-sm btn-primary shadow-sm">
+                            <i class="fas fa-plus fa-sm text-white-50"></i>
+                            Nhập kho
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card shadow mb-4">
+
+                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            Danh sách giao dịch kho
+                        </h6>
+
+                        <span class="badge badge-light"
+                              th:text="${transactionPage.totalElements + ' giao dịch'}">
+                            0 giao dịch
+                        </span>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="table-responsive">
+
+                            <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                                <thead class="thead-light">
+                                <tr>
+                                    <th style="width: 120px;">Loại</th>
+                                    <th style="width: 180px;">Mã giao dịch</th>
+                                    <th>Chi nhánh</th>
+                                    <th class="text-center" style="width: 130px;">Số sản phẩm</th>
+                                    <th class="text-right" style="width: 150px;">Tổng số lượng</th>
+                                    <th>Ghi chú</th>
+                                    <th style="width: 170px;">Thời gian</th>
+                                    <th style="width: 180px;">Người thao tác</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                <tr th:each="transaction : ${transactionSummaries}">
+                                    <td>
+                                        <span th:if="${transaction.transactionType != null && transaction.transactionType.name() == 'IMPORT'}"
+                                              class="badge badge-success">
+                                            Nhập kho
+                                        </span>
+
+                                        <span th:if="${transaction.transactionType != null && transaction.transactionType.name() == 'SALE'}"
+                                              class="badge badge-danger">
+                                            Bán hàng
+                                        </span>
+
+                                        <span th:if="${transaction.transactionType != null && transaction.transactionType.name() == 'TRANSFER_OUT'}"
+                                              class="badge badge-warning">
+                                            Chuyển đi
+                                        </span>
+
+                                        <span th:if="${transaction.transactionType != null && transaction.transactionType.name() == 'TRANSFER_IN'}"
+                                              class="badge badge-info">
+                                            Chuyển đến
+                                        </span>
+
+                                        <span th:if="${transaction.transactionType != null && transaction.transactionType.name() == 'ADJUSTMENT'}"
+                                              class="badge badge-secondary">
+                                            Điều chỉnh
+                                        </span>
+
+                                        <span th:if="${transaction.transactionType == null}"
+                                              class="badge badge-light border">
+                                            —
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="font-weight-bold text-primary"
+                                              th:text="${transaction.batchCode}">
+                                            IMP20260502010101
+                                        </span>
+                                    </td>
+
+                                    <td th:text="${transaction.branchName}">
+                                        Chi nhánh An Khê
+                                    </td>
+
+                                    <td class="text-center">
+                                        <span class="badge badge-light border"
+                                              th:text="${transaction.itemCount + ' sản phẩm'}">
+                                            3 sản phẩm
+                                        </span>
+                                    </td>
+
+                                    <td class="text-right font-weight-bold"
+                                        th:text="${#numbers.formatDecimal(transaction.totalQuantity, 0, 'COMMA', 2, 'POINT')}">
+                                        0
+                                    </td>
+
+                                    <td th:text="${transaction.note != null && !transaction.note.isBlank() ? transaction.note : '—'}">
+                                        Ghi chú
+                                    </td>
+
+                                    <td th:text="${transaction.createdAt != null ? transaction.createdAt : '—'}">
+                                        2026-05-02T01:00:00Z
+                                    </td>
+
+                                    <td th:text="${transaction.createdBy != null && !transaction.createdBy.isBlank() ? transaction.createdBy : '—'}">
+                                        admin
+                                    </td>
+                                </tr>
+
+                                <tr th:if="${#lists.isEmpty(transactionSummaries)}">
+                                    <td colspan="8" class="text-center text-muted">
+                                        Chưa có giao dịch kho nào.
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-3"
+                             th:if="${transactionPage.totalPages > 0}">
+
+                            <small class="text-muted"
+                                   th:text="'Hiển thị ' + ${#lists.size(transactionSummaries)} + ' / ' + ${transactionPage.totalElements} + ' giao dịch'">
+                                Hiển thị 10 / 100 giao dịch
+                            </small>
+
+                            <nav th:if="${transactionPage.totalPages > 1}">
+                                <ul class="pagination pagination-sm mb-0">
+
+                                    <li class="page-item" th:classappend="${transactionPage.first} ? 'disabled'">
+                                        <a class="page-link"
+                                           th:href="@{/inventories/transactions(page=${transactionPage.number - 1}, size=${transactionPage.size})}">
+                                            Trước
+                                        </a>
+                                    </li>
+
+                                    <li class="page-item"
+                                        th:each="pageNumber : ${#numbers.sequence(0, transactionPage.totalPages - 1)}"
+                                        th:classappend="${pageNumber == transactionPage.number} ? 'active'">
+
+                                        <a class="page-link"
+                                           th:href="@{/inventories/transactions(page=${pageNumber}, size=${transactionPage.size})}"
+                                           th:text="${pageNumber + 1}">
+                                            1
+                                        </a>
+                                    </li>
+
+                                    <li class="page-item" th:classappend="${transactionPage.last} ? 'disabled'">
+                                        <a class="page-link"
+                                           th:href="@{/inventories/transactions(page=${transactionPage.number + 1}, size=${transactionPage.size})}">
+                                            Sau
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </nav>
+                        </div>
+
+                        <div class="alert alert-info mb-0 mt-3">
+                            <i class="fas fa-info-circle"></i>
+                            Một lần nhập nhiều sản phẩm sẽ được gom thành một dòng lịch sử theo mã giao dịch.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div th:replace="~{fragments/footer :: footer}"></div>
+
+    </div>
+
+</div>
+
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<div th:replace="~{fragments/logoutmodal :: logoutmodal}"></div>
+<div th:replace="~{fragments/loading :: loading}"></div>
+<div th:replace="~{fragments/toast :: toast}"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+
+</body>
+</html>

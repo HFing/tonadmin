@@ -64,4 +64,6 @@ public class Product extends BaseEntity {
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     @Builder.Default
     private Set<Inventory> inventories = new HashSet<>();
+
+
 }

@@ -1,4 +1,4 @@
-package com.hfing.tonadmin.configs;
+package com.hfing.tonadmin.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
