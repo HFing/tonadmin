@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>TonAdmin - Sales Orders</title>
+
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/css/custom.css}" rel="stylesheet">
+</head>
+
+<body id="page-top">
+
+<div id="wrapper">
+
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <div id="content">
+
+            <div th:replace="~{fragments/topbar :: topbar}"></div>
+
+            <div class="container-fluid">
+
+                <div th:replace="~{fragments/breadcrumb :: breadcrumb(${breadcrumbs})}"></div>
+
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <div>
+                        <h1 class="h3 mb-0 text-gray-800">Đơn bán hàng</h1>
+                        <small class="text-muted">Quản lý đơn bán, thanh toán và xuất kho</small>
+                    </div>
+
+                    <a th:href="@{/sales-orders/create}"
+                       class="btn btn-sm btn-primary shadow-sm">
+                        <i class="fas fa-plus fa-sm text-white-50"></i>
+                        Tạo đơn bán
+                    </a>
+                </div>
+
+                <div class="card shadow mb-4">
+
+                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold text-primary">Danh sách đơn bán hàng</h6>
+
+                        <span class="badge badge-light"
+                              th:text="${salesOrderPage.totalElements + ' đơn'}">
+                            0 đơn
+                        </span>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                                <thead class="thead-light">
+                                <tr>
+                                    <th>Mã đơn</th>
+                                    <th>Chi nhánh</th>
+                                    <th>Khách hàng</th>
+                                    <th class="text-right">Thành tiền</th>
+                                    <th class="text-right">Đã trả</th>
+                                    <th class="text-right">Còn lại</th>
+                                    <th>Thanh toán</th>
+                                    <th>Trạng thái</th>
+                                    <th>Thời gian</th>
+                                    <th style="width: 90px;">Thao tác</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                <tr th:each="order : ${salesOrders}">
+                                    <td>
+                                        <a class="font-weight-bold text-primary"
+                                           th:href="@{/sales-orders/{id}(id=${order.id})}"
+                                           th:text="${order.orderCode}">
+                                            SO202605020001
+                                        </a>
+                                    </td>
+
+                                    <td th:text="${order.branch != null ? order.branch.name : '—'}">
+                                        Chi nhánh
+                                    </td>
+
+                                    <td>
+                                        <div th:text="${order.customerName != null && !order.customerName.isBlank() ? order.customerName : 'Khách lẻ'}">
+                                            Khách lẻ
+                                        </div>
+                                        <small class="text-muted"
+                                               th:if="${order.customerPhone != null && !order.customerPhone.isBlank()}"
+                                               th:text="${order.customerPhone}">
+                                            0900000000
+                                        </small>
+                                    </td>
+
+                                    <td class="text-right font-weight-bold"
+                                        th:text="${#numbers.formatDecimal(order.finalAmount, 0, 'COMMA', 0, 'POINT')}">
+                                        0
+                                    </td>
+
+                                    <td class="text-right"
+                                        th:text="${#numbers.formatDecimal(order.paidAmount, 0, 'COMMA', 0, 'POINT')}">
+                                        0
+                                    </td>
+
+                                    <td class="text-right"
+                                        th:text="${#numbers.formatDecimal(order.remainingAmount, 0, 'COMMA', 0, 'POINT')}">
+                                        0
+                                    </td>
+
+                                    <td>
+                                        <span th:if="${order.paymentStatus.name() == 'PAID'}"
+                                              class="badge badge-success">
+                                            Đã thanh toán
+                                        </span>
+
+                                        <span th:if="${order.paymentStatus.name() == 'PARTIALLY_PAID'}"
+                                              class="badge badge-warning">
+                                            Trả một phần
+                                        </span>
+
+                                        <span th:if="${order.paymentStatus.name() == 'UNPAID'}"
+                                              class="badge badge-secondary">
+                                            Chưa thanh toán
+                                        </span>
+
+                                        <span th:if="${order.paymentStatus.name() == 'REFUNDED'}"
+                                              class="badge badge-info">
+                                            Đã hoàn tiền
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span th:if="${order.status.name() == 'COMPLETED'}"
+                                              class="badge badge-success">
+                                            Hoàn tất
+                                        </span>
+
+                                        <span th:if="${order.status.name() == 'CANCELLED'}"
+                                              class="badge badge-danger">
+                                            Đã hủy
+                                        </span>
+                                    </td>
+
+                                    <td th:text="${order.createdAt != null ? order.createdAt : '—'}">
+                                        time
+                                    </td>
+
+                                    <td>
+                                        <a th:href="@{/sales-orders/{id}(id=${order.id})}"
+                                           class="btn btn-info btn-sm"
+                                           title="Xem chi tiết">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+
+                                <tr th:if="${#lists.isEmpty(salesOrders)}">
+                                    <td colspan="10" class="text-center text-muted">
+                                        Chưa có đơn bán hàng nào.
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-3"
+                             th:if="${salesOrderPage.totalPages > 0}">
+
+                            <small class="text-muted"
+                                   th:text="'Hiển thị ' + ${#lists.size(salesOrders)} + ' / ' + ${salesOrderPage.totalElements} + ' đơn'">
+                                Hiển thị 10 / 100 đơn
+                            </small>
+
+                            <nav th:if="${salesOrderPage.totalPages > 1}">
+                                <ul class="pagination pagination-sm mb-0">
+
+                                    <li class="page-item" th:classappend="${salesOrderPage.first} ? 'disabled'">
+                                        <a class="page-link"
+                                           th:href="@{/sales-orders(page=${salesOrderPage.number - 1}, size=${salesOrderPage.size})}">
+                                            Trước
+                                        </a>
+                                    </li>
+
+                                    <li class="page-item"
+                                        th:each="pageNumber : ${#numbers.sequence(0, salesOrderPage.totalPages - 1)}"
+                                        th:classappend="${pageNumber == salesOrderPage.number} ? 'active'">
+
+                                        <a class="page-link"
+                                           th:href="@{/sales-orders(page=${pageNumber}, size=${salesOrderPage.size})}"
+                                           th:text="${pageNumber + 1}">
+                                            1
+                                        </a>
+                                    </li>
+
+                                    <li class="page-item" th:classappend="${salesOrderPage.last} ? 'disabled'">
+                                        <a class="page-link"
+                                           th:href="@{/sales-orders(page=${salesOrderPage.number + 1}, size=${salesOrderPage.size})}">
+                                            Sau
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </nav>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div th:replace="~{fragments/footer :: footer}"></div>
+
+    </div>
+
+</div>
+
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<div th:replace="~{fragments/logoutmodal :: logoutmodal}"></div>
+<div th:replace="~{fragments/loading :: loading}"></div>
+<div th:replace="~{fragments/toast :: toast}"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+
+</body>
+</html>

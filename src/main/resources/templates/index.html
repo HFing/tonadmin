@@ -1,396 +1,551 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
     <title>TonAdmin - Dashboard</title>
 
     <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
-    <link
-            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-            rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
     <link th:href="@{/css/custom.css}" rel="stylesheet">
+
+    <style>
+        .dashboard-filter {
+            min-width: 230px;
+        }
+
+        .dashboard-badge {
+            border-radius: 999px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 576px) {
+            .dashboard-filter {
+                min-width: 100%;
+            }
+        }
+    </style>
 </head>
 
 <body id="page-top">
 
-    <!-- Page Wrapper -->
-    <div id="wrapper">
+<div id="wrapper">
 
-        <!-- Sidebar -->
-        <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
+    <div id="content-wrapper" class="d-flex flex-column">
 
-        <!-- Content Wrapper -->
-        <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
 
-            <!-- Main Content -->
-            <div id="content">
+            <div th:replace="~{fragments/topbar :: topbar}"></div>
 
-                <!-- Topbar -->
-                <div th:replace="~{fragments/topbar :: topbar}"></div>
+            <div class="container-fluid">
 
-
-                <!-- Begin Page Content -->
-                <div class="container-fluid">
-
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                <!-- Heading + Compact Filter -->
+                <div class="d-sm-flex align-items-start justify-content-between mb-4">
+                    <div>
                         <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+
+                        <small class="text-muted" th:if="${isAdmin}">
+                            Tổng quan bán hàng, công nợ và tồn kho
+                        </small>
+
+                        <small class="text-muted" th:if="${!isAdmin}">
+                            Tổng quan hoạt động hôm nay
+                        </small>
                     </div>
 
-                    <!-- Content Row -->
-                    <div class="row">
+                    <div class="mt-3 mt-sm-0 d-flex align-items-center flex-wrap">
 
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                Earnings (Monthly)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <!-- Admin branch filter -->
+                        <form th:if="${isAdmin}"
+                              th:action="@{/dashboard}"
+                              method="get"
+                              class="form-inline mr-2 mb-2">
 
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-success shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Earnings (Annual)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
+                            <div class="input-group input-group-sm shadow-sm dashboard-filter">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-white">
+                                        <i class="fas fa-store text-primary"></i>
+                                    </span>
                                 </div>
-                            </div>
-                        </div>
 
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-info shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks
-                                            </div>
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col-auto">
-                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="progress progress-sm mr-2">
-                                                        <div class="progress-bar bg-info" role="progressbar"
-                                                            style="width: 50%" aria-valuenow="50" aria-valuemin="0"
-                                                            aria-valuemax="100"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                                <select name="branchId"
+                                        class="custom-select"
+                                        onchange="this.form.submit()">
+                                    <option value="">Toàn hệ thống</option>
 
-                        <!-- Pending Requests Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-warning shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                Pending Requests</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-comments fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
+                                    <option th:each="branch : ${branches}"
+                                            th:value="${branch.id}"
+                                            th:selected="${branch.id == selectedBranchId}"
+                                            th:text="${branch.name}">
+                                        Chi nhánh
+                                    </option>
+                                </select>
                             </div>
-                        </div>
+
+                            <a th:if="${selectedBranchId != null && !selectedBranchId.isBlank()}"
+                               th:href="@{/dashboard}"
+                               class="btn btn-sm btn-light border shadow-sm ml-2"
+                               title="Xóa lọc">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        </form>
+
+                        <a th:href="@{/sales-orders/create}"
+                           class="btn btn-sm btn-primary shadow-sm mb-2">
+                            <i class="fas fa-plus fa-sm text-white-50"></i>
+                            Tạo đơn bán
+                        </a>
                     </div>
+                </div>
 
-                    <!-- Content Row -->
+                <!-- Admin Selected Scope Badge -->
+                <div class="mb-3" th:if="${isAdmin}">
+                    <span class="badge badge-primary px-3 py-2 dashboard-badge"
+                          th:if="${selectedBranchId == null || selectedBranchId.isBlank()}">
+                        <i class="fas fa-globe-asia"></i>
+                        Đang xem: Toàn hệ thống
+                    </span>
 
-                    <div class="row">
+                    <span class="badge badge-info px-3 py-2 dashboard-badge"
+                          th:if="${selectedBranchId != null && !selectedBranchId.isBlank()}">
+                        <i class="fas fa-store"></i>
+                        Đang xem theo chi nhánh
+                    </span>
+                </div>
 
-                        <!-- Area Chart -->
-                        <div class="col-xl-8 col-lg-7">
-                            <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div
-                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
+                <!-- Summary Cards -->
+                <div class="row">
+
+                    <!-- Admin only: Revenue Today -->
+                    <div class="col-xl-3 col-md-6 mb-4" th:if="${isAdmin}">
+                        <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            Doanh thu hôm nay
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800"
+                                             th:text="${#numbers.formatDecimal(stats.revenueToday(), 0, 'COMMA', 0, 'POINT') + 'đ'}">
+                                            0đ
                                         </div>
                                     </div>
-                                </div>
-                                <!-- Card Body -->
-                                <div class="card-body">
-                                    <div class="chart-area">
-                                        <canvas id="myAreaChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Pie Chart -->
-                        <div class="col-xl-4 col-lg-5">
-                            <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div
-                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Card Body -->
-                                <div class="card-body">
-                                    <div class="chart-pie pt-4 pb-2">
-                                        <canvas id="myPieChart"></canvas>
-                                    </div>
-                                    <div class="mt-4 text-center small">
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-primary"></i> Direct
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-success"></i> Social
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-info"></i> Referral
-                                        </span>
+                                    <div class="col-auto">
+                                        <i class="fas fa-calendar-day fa-2x text-gray-300"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Content Row -->
-                    <div class="row">
-
-                        <!-- Content Column -->
-                        <div class="col-lg-6 mb-4">
-
-                            <!-- Project Card Example -->
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Projects</h6>
-                                </div>
-                                <div class="card-body">
-                                    <h4 class="small font-weight-bold">Server Migration <span
-                                            class="float-right">20%</span></h4>
-                                    <div class="progress mb-4">
-                                        <div class="progress-bar bg-danger" role="progressbar" style="width: 20%"
-                                            aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                    <!-- Admin only: Revenue This Month -->
+                    <div class="col-xl-3 col-md-6 mb-4" th:if="${isAdmin}">
+                        <div class="card border-left-success shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                            Doanh thu tháng này
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800"
+                                             th:text="${#numbers.formatDecimal(stats.revenueThisMonth(), 0, 'COMMA', 0, 'POINT') + 'đ'}">
+                                            0đ
+                                        </div>
                                     </div>
-                                    <h4 class="small font-weight-bold">Sales Tracking <span
-                                            class="float-right">40%</span></h4>
-                                    <div class="progress mb-4">
-                                        <div class="progress-bar bg-warning" role="progressbar" style="width: 40%"
-                                            aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <h4 class="small font-weight-bold">Customer Database <span
-                                            class="float-right">60%</span></h4>
-                                    <div class="progress mb-4">
-                                        <div class="progress-bar" role="progressbar" style="width: 60%"
-                                            aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <h4 class="small font-weight-bold">Payout Details <span
-                                            class="float-right">80%</span></h4>
-                                    <div class="progress mb-4">
-                                        <div class="progress-bar bg-info" role="progressbar" style="width: 80%"
-                                            aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <h4 class="small font-weight-bold">Account Setup <span
-                                            class="float-right">Complete!</span></h4>
-                                    <div class="progress">
-                                        <div class="progress-bar bg-success" role="progressbar" style="width: 100%"
-                                            aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-chart-line fa-2x text-gray-300"></i>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Color System -->
-                            <div class="row">
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-primary text-white shadow">
-                                        <div class="card-body">
-                                            Primary
-                                            <div class="text-white-50 small">#4e73df</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-success text-white shadow">
-                                        <div class="card-body">
-                                            Success
-                                            <div class="text-white-50 small">#1cc88a</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-info text-white shadow">
-                                        <div class="card-body">
-                                            Info
-                                            <div class="text-white-50 small">#36b9cc</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-warning text-white shadow">
-                                        <div class="card-body">
-                                            Warning
-                                            <div class="text-white-50 small">#f6c23e</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-danger text-white shadow">
-                                        <div class="card-body">
-                                            Danger
-                                            <div class="text-white-50 small">#e74a3b</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-secondary text-white shadow">
-                                        <div class="card-body">
-                                            Secondary
-                                            <div class="text-white-50 small">#858796</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-light text-black shadow">
-                                        <div class="card-body">
-                                            Light
-                                            <div class="text-black-50 small">#f8f9fc</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 mb-4">
-                                    <div class="card bg-dark text-white shadow">
-                                        <div class="card-body">
-                                            Dark
-                                            <div class="text-white-50 small">#5a5c69</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
+                    </div>
 
-                        <div class="col-lg-6 mb-4">
-
-                            <!-- Illustrations -->
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Illustrations</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="text-center">
-                                        <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;"
-                                            src="img/undraw_posting_photo.svg" alt="...">
+                    <!-- Admin + Staff -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-info shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                            Đơn hôm nay
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800"
+                                             th:text="${stats.ordersToday()}">
+                                            0
+                                        </div>
                                     </div>
-                                    <p>Add some quality, svg illustrations to your project courtesy of <a
-                                            target="_blank" rel="nofollow" href="https://undraw.co/">unDraw</a>, a
-                                        constantly updated collection of beautiful svg images that you can use
-                                        completely free and without attribution!</p>
-                                    <a target="_blank" rel="nofollow" href="https://undraw.co/">Browse Illustrations on
-                                        unDraw &rarr;</a>
+                                    <div class="col-auto">
+                                        <i class="fas fa-shopping-cart fa-2x text-gray-300"></i>
+                                    </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
-                            <!-- Approach -->
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Development Approach</h6>
-                                </div>
-                                <div class="card-body">
-                                    <p>SB Admin 2 makes extensive use of Bootstrap 4 utility classes in order to reduce
-                                        CSS bloat and poor page performance. Custom CSS classes are used to create
-                                        custom components and custom utility classes.</p>
-                                    <p class="mb-0">Before working with this theme, you should become familiar with the
-                                        Bootstrap framework, especially the utility classes.</p>
+                    <!-- Admin + Staff -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-warning shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                            Công nợ còn lại
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800"
+                                             th:text="${#numbers.formatDecimal(stats.unpaidAmount(), 0, 'COMMA', 0, 'POINT') + 'đ'}">
+                                            0đ
+                                        </div>
+                                        <small class="text-muted"
+                                               th:text="${stats.unpaidOrders() + ' đơn chưa thanh toán đủ'}">
+                                            0 đơn chưa thanh toán đủ
+                                        </small>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-money-bill-wave fa-2x text-gray-300"></i>
+                                    </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
 
                 </div>
-                <!-- /.container-fluid -->
+
+                <!-- Inventory Alerts Cards -->
+                <div class="row">
+
+                    <div class="col-xl-6 col-md-6 mb-4">
+                        <div class="card border-left-danger shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                            Sản phẩm hết hàng
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800"
+                                             th:text="${stats.outOfStockCount()}">
+                                            0
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-6 col-md-6 mb-4">
+                        <div class="card border-left-warning shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                            Sản phẩm sắp hết hàng
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800"
+                                             th:text="${stats.lowStockCount()}">
+                                            0
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-box-open fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Admin Detail Section -->
+                <div class="row" th:if="${isAdmin}">
+
+                    <!-- Recent Orders -->
+                    <div class="col-lg-7 mb-4">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                                <h6 class="m-0 font-weight-bold text-primary">Đơn bán gần đây</h6>
+                                <a th:href="@{/sales-orders}" class="small">Xem tất cả</a>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover" width="100%">
+                                        <thead class="thead-light">
+                                        <tr>
+                                            <th>Mã đơn</th>
+                                            <th>Khách hàng</th>
+                                            <th>Chi nhánh</th>
+                                            <th class="text-right">Thành tiền</th>
+                                            <th>Thanh toán</th>
+                                        </tr>
+                                        </thead>
+
+                                        <tbody>
+                                        <tr th:each="order : ${stats.recentOrders()}">
+                                            <td>
+                                                <a class="font-weight-bold text-primary"
+                                                   th:href="@{/sales-orders/{id}(id=${order.id()})}"
+                                                   th:text="${order.orderCode()}">
+                                                    SO001
+                                                </a>
+                                                <div class="small text-muted" th:text="${order.createdAt()}">
+                                                    —
+                                                </div>
+                                            </td>
+
+                                            <td th:text="${order.customerName()}">Khách lẻ</td>
+
+                                            <td th:text="${order.branchName()}">Chi nhánh</td>
+
+                                            <td class="text-right font-weight-bold"
+                                                th:text="${#numbers.formatDecimal(order.finalAmount(), 0, 'COMMA', 0, 'POINT')}">
+                                                0
+                                            </td>
+
+                                            <td>
+                                                <span th:if="${order.paymentStatus() == 'PAID'}"
+                                                      class="badge badge-success">
+                                                    Đã thanh toán
+                                                </span>
+
+                                                <span th:if="${order.paymentStatus() == 'PARTIALLY_PAID'}"
+                                                      class="badge badge-warning">
+                                                    Trả một phần
+                                                </span>
+
+                                                <span th:if="${order.paymentStatus() == 'UNPAID'}"
+                                                      class="badge badge-secondary">
+                                                    Chưa thanh toán
+                                                </span>
+
+                                                <span th:if="${order.paymentStatus() == 'REFUNDED'}"
+                                                      class="badge badge-info">
+                                                    Đã hoàn tiền
+                                                </span>
+                                            </td>
+                                        </tr>
+
+                                        <tr th:if="${#lists.isEmpty(stats.recentOrders())}">
+                                            <td colspan="5" class="text-center text-muted">
+                                                Chưa có đơn bán gần đây.
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Low Stock -->
+                    <div class="col-lg-5 mb-4">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                                <h6 class="m-0 font-weight-bold text-danger">Cảnh báo tồn kho thấp</h6>
+                                <a th:href="@{/inventories}" class="small">Xem tồn kho</a>
+                            </div>
+
+                            <div class="card-body">
+                                <div th:each="item : ${stats.lowStockItems()}"
+                                     class="mb-3 pb-3 border-bottom">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <div class="font-weight-bold text-gray-900"
+                                                 th:text="${item.productCode() + ' - ' + item.productName()}">
+                                                TON001 - Tôn lạnh
+                                            </div>
+                                            <small class="text-muted" th:text="${item.branchName()}">
+                                                Chi nhánh
+                                            </small>
+                                        </div>
+
+                                        <div class="text-right">
+                                            <div class="font-weight-bold text-danger"
+                                                 th:text="${#numbers.formatDecimal(item.quantity(), 0, 'COMMA', 2, 'POINT')}">
+                                                0
+                                            </div>
+                                            <small class="text-muted">
+                                                Min:
+                                                <span th:text="${#numbers.formatDecimal(item.minStock(), 0, 'COMMA', 2, 'POINT')}">
+                                                    0
+                                                </span>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div th:if="${#lists.isEmpty(stats.lowStockItems())}"
+                                     class="text-center text-muted py-3">
+                                    Không có sản phẩm sắp hết hàng.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Staff Low Stock Section -->
+                <div class="row" th:if="${!isAdmin}">
+                    <div class="col-lg-12 mb-4">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                                <h6 class="m-0 font-weight-bold text-danger">Cảnh báo tồn kho thấp</h6>
+                                <a th:href="@{/inventories}" class="small">Xem tồn kho</a>
+                            </div>
+
+                            <div class="card-body">
+                                <div th:each="item : ${stats.lowStockItems()}"
+                                     class="mb-3 pb-3 border-bottom">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <div class="font-weight-bold text-gray-900"
+                                                 th:text="${item.productCode() + ' - ' + item.productName()}">
+                                                TON001 - Tôn lạnh
+                                            </div>
+                                            <small class="text-muted" th:text="${item.branchName()}">
+                                                Chi nhánh
+                                            </small>
+                                        </div>
+
+                                        <div class="text-right">
+                                            <div class="font-weight-bold text-danger"
+                                                 th:text="${#numbers.formatDecimal(item.quantity(), 0, 'COMMA', 2, 'POINT')}">
+                                                0
+                                            </div>
+                                            <small class="text-muted">
+                                                Min:
+                                                <span th:text="${#numbers.formatDecimal(item.minStock(), 0, 'COMMA', 2, 'POINT')}">
+                                                    0
+                                                </span>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div th:if="${#lists.isEmpty(stats.lowStockItems())}"
+                                     class="text-center text-muted py-3">
+                                    Không có sản phẩm sắp hết hàng.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Stock Activities -->
+                <div class="row" th:if="${isAdmin}">
+                    <div class="col-lg-12 mb-4">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                                <h6 class="m-0 font-weight-bold text-primary">Lịch sử kho gần đây</h6>
+                                <a th:href="@{/inventories/transactions}" class="small">Xem lịch sử kho</a>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover" width="100%">
+                                        <thead class="thead-light">
+                                        <tr>
+                                            <th>Chi nhánh</th>
+                                            <th>Sản phẩm</th>
+                                            <th>Loại</th>
+                                            <th class="text-right">Số lượng</th>
+                                            <th>Thời gian</th>
+                                        </tr>
+                                        </thead>
+
+                                        <tbody>
+                                        <tr th:each="activity : ${stats.recentStockActivities()}">
+                                            <td th:text="${activity.branchName()}">Chi nhánh</td>
+
+                                            <td>
+                                                <span class="font-weight-bold text-primary"
+                                                      th:text="${activity.productCode()}">
+                                                    TON001
+                                                </span>
+                                                -
+                                                <span th:text="${activity.productName()}">
+                                                    Tôn lạnh
+                                                </span>
+                                            </td>
+
+                                            <td>
+                                                <span th:if="${activity.transactionType() == 'IMPORT'}"
+                                                      class="badge badge-success">
+                                                    Nhập kho
+                                                </span>
+
+                                                <span th:if="${activity.transactionType() == 'SALE'}"
+                                                      class="badge badge-danger">
+                                                    Bán hàng
+                                                </span>
+
+                                                <span th:if="${activity.transactionType() == 'RETURN'}"
+                                                      class="badge badge-warning">
+                                                    Hoàn kho
+                                                </span>
+
+                                                <span th:if="${activity.transactionType() == 'TRANSFER_OUT'}"
+                                                      class="badge badge-secondary">
+                                                    Chuyển đi
+                                                </span>
+
+                                                <span th:if="${activity.transactionType() == 'TRANSFER_IN'}"
+                                                      class="badge badge-info">
+                                                    Chuyển đến
+                                                </span>
+
+                                                <span th:if="${activity.transactionType() == 'ADJUSTMENT'}"
+                                                      class="badge badge-dark">
+                                                    Điều chỉnh
+                                                </span>
+                                            </td>
+
+                                            <td class="text-right font-weight-bold"
+                                                th:text="${#numbers.formatDecimal(activity.quantity(), 0, 'COMMA', 2, 'POINT')}">
+                                                0
+                                            </td>
+
+                                            <td th:text="${activity.createdAt()}">—</td>
+                                        </tr>
+
+                                        <tr th:if="${#lists.isEmpty(stats.recentStockActivities())}">
+                                            <td colspan="5" class="text-center text-muted">
+                                                Chưa có lịch sử kho gần đây.
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
             </div>
-            <!-- End of Main Content -->
-
-            <!-- Footer -->
-            <div th:replace="~{fragments/footer :: footer}"></div>
-            <!-- End of Footer -->
 
         </div>
-        <!-- End of Content Wrapper -->
+
+        <div th:replace="~{fragments/footer :: footer}"></div>
 
     </div>
-    <!-- End of Page Wrapper -->
 
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
+</div>
 
-    <!-- Logout Modal-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
 
-    <div th:replace="~{fragments/logoutmodal :: logoutmodal}"></div>
-    <div th:replace="~{fragments/loading :: loading}"></div>
-    <div th:replace="~{fragments/toast :: toast}"></div>
-    <div th:replace="~{fragments/scripts :: scripts}"></div>
+<div th:replace="~{fragments/logoutmodal :: logoutmodal}"></div>
+<div th:replace="~{fragments/loading :: loading}"></div>
+<div th:replace="~{fragments/toast :: toast}"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
 
 </body>
-
 </html>

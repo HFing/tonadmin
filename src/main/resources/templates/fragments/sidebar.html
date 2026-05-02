@@ -1,58 +1,78 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <body>
 <ul th:fragment="sidebar"
     class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
     id="accordionSidebar">
 
-    <!-- Sidebar - Brand -->
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/dashboard">
-        <div class="sidebar-brand-icon ">
+    <!-- Brand -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center"
+       th:href="@{/dashboard}">
+        <div class="sidebar-brand-icon">
             <i class="fas fa-warehouse"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">Ton Admin</div>
+        <div class="sidebar-brand-text mx-3">
+            TonAdmin
+        </div>
     </a>
 
-    <!-- Divider -->
     <hr class="sidebar-divider my-0">
 
-    <!-- Nav Item - Dashboard -->
-    <li class="nav-item active">
-        <a class="nav-link" href="/dashboard">
+    <!-- Dashboard -->
+    <li class="nav-item">
+        <a class="nav-link" th:href="@{/dashboard}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Dashboard</span></a>
+            <span>Dashboard</span>
+        </a>
     </li>
 
-    <!-- Divider -->
     <hr class="sidebar-divider">
 
-    <!-- Heading -->
+    <!-- Business -->
     <div class="sidebar-heading">
-        Interface
+        Kinh doanh
     </div>
 
-    <li class="nav-item">
+    <li class="nav-item" sec:authorize="hasAnyRole('ADMIN', 'BRANCH_STAFF')">
+        <a class="nav-link" th:href="@{/sales-orders}">
+            <i class="fas fa-fw fa-shopping-cart"></i>
+            <span>Bán hàng</span>
+        </a>
+    </li>
+
+    <!-- Products - ADMIN only -->
+    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProducts"
            aria-expanded="true" aria-controls="collapseProducts">
             <i class="fas fa-fw fa-boxes"></i>
             <span>Sản phẩm</span>
         </a>
 
-        <div id="collapseProducts" class="collapse" aria-labelledby="headingProducts" data-parent="#accordionSidebar">
+        <div id="collapseProducts" class="collapse" aria-labelledby="headingProducts"
+             data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Quản lý sản phẩm:</h6>
-
-                <a class="collapse-item" th:href="@{/product-categories}">
-                    Danh mục sản phẩm
-                </a>
 
                 <a class="collapse-item" th:href="@{/products}">
                     Sản phẩm
                 </a>
+
+                <a class="collapse-item" th:href="@{/product-categories}">
+                    Danh mục sản phẩm
+                </a>
             </div>
         </div>
     </li>
+
+    <hr class="sidebar-divider">
+
+    <!-- Inventory -->
+    <div class="sidebar-heading">
+        Kho hàng
+    </div>
 
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseInventory"
@@ -61,126 +81,74 @@
             <span>Kho hàng</span>
         </a>
 
-        <div id="collapseInventory" class="collapse" aria-labelledby="headingInventory" data-parent="#accordionSidebar">
+        <div id="collapseInventory" class="collapse" aria-labelledby="headingInventory"
+             data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Quản lý kho:</h6>
 
-                <a class="collapse-item" th:href="@{/inventories}">
+                <a class="collapse-item"
+                   sec:authorize="hasAnyRole('ADMIN', 'BRANCH_STAFF')"
+                   th:href="@{/inventories}">
                     Tồn kho
                 </a>
 
-                <a class="collapse-item" th:href="@{/inventories/import}">
+                <a class="collapse-item"
+                   sec:authorize="hasRole('ADMIN')"
+                   th:href="@{/inventories/import}">
                     Nhập kho
                 </a>
 
-                <a class="collapse-item" th:href="@{/inventories/transactions}">
+                <a class="collapse-item"
+                   sec:authorize="hasRole('ADMIN')"
+                   th:href="@{/stock-transfers}">
+                    Chuyển kho
+                </a>
+
+                <a class="collapse-item"
+                   sec:authorize="hasAnyRole('ADMIN', 'BRANCH_STAFF')"
+                   th:href="@{/inventories/transactions}">
                     Lịch sử kho
                 </a>
             </div>
         </div>
     </li>
 
-    <!-- Nav Item - Pages Collapse Menu -->
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-           aria-expanded="true" aria-controls="collapseTwo">
-            <i class="fas fa-fw fa-cog"></i>
-            <span>Components</span>
-        </a>
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Custom Components:</h6>
-                <a class="collapse-item" href="buttons.html">Buttons</a>
-                <a class="collapse-item" href="cards.html">Cards</a>
-            </div>
-        </div>
-    </li>
+    <hr class="sidebar-divider" sec:authorize="hasRole('ADMIN')">
 
-    <!-- Nav Item - Utilities Collapse Menu -->
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-           aria-expanded="true" aria-controls="collapseUtilities">
-            <i class="fas fa-fw fa-wrench"></i>
-            <span>Utilities</span>
-        </a>
-        <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-             data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Custom Utilities:</h6>
-                <a class="collapse-item" href="utilities-color.html">Colors</a>
-                <a class="collapse-item" href="utilities-border.html">Borders</a>
-                <a class="collapse-item" href="utilities-animation.html">Animations</a>
-                <a class="collapse-item" href="utilities-other.html">Other</a>
-            </div>
-        </div>
-    </li>
-
-    <!-- Divider -->
-    <hr class="sidebar-divider">
-
-    <!-- Heading -->
-    <div class="sidebar-heading">
-        Addons
+    <!-- System - ADMIN only -->
+    <div class="sidebar-heading" sec:authorize="hasRole('ADMIN')">
+        Hệ thống
     </div>
 
-    <!-- Nav Item - Pages Collapse Menu -->
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-           aria-expanded="true" aria-controls="collapsePages">
-            <i class="fas fa-fw fa-folder"></i>
-            <span>Pages</span>
+    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSystem"
+           aria-expanded="true" aria-controls="collapseSystem">
+            <i class="fas fa-fw fa-cogs"></i>
+            <span>Hệ thống</span>
         </a>
-        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+
+        <div id="collapseSystem" class="collapse" aria-labelledby="headingSystem"
+             data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Login Screens:</h6>
-                <a class="collapse-item" href="login.html">Login</a>
-                <a class="collapse-item" href="register.html">Register</a>
-                <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                <div class="collapse-divider"></div>
-                <h6 class="collapse-header">Other Pages:</h6>
-                <a class="collapse-item" href="404.html">404 Page</a>
-                <a class="collapse-item" href="blank.html">Blank Page</a>
+                <h6 class="collapse-header">Thiết lập hệ thống:</h6>
+
+                <a class="collapse-item" th:href="@{/branches}">
+                    Chi nhánh
+                </a>
+
+                <a class="collapse-item" th:href="@{/users}">
+                    Người dùng
+                </a>
             </div>
         </div>
     </li>
 
-    <!-- Nav Item - Charts -->
-    <li class="nav-item">
-        <a class="nav-link" href="charts.html">
-            <i class="fas fa-fw fa-chart-area"></i>
-            <span>Charts</span></a>
-    </li>
-
-    <!-- Nav Item - Tables -->
-    <li class="nav-item">
-        <a class="nav-link" href="tables.html">
-            <i class="fas fa-fw fa-table"></i>
-            <span>Tables</span></a>
-    </li>
-
-    <li class="nav-item">
-        <a class="nav-link" th:href="@{/branches}">
-            <i class="fas fa-fw fa-store"></i>
-            <span>Chi nhánh</span>
-        </a>
-    </li>
-
-    <li class="nav-item">
-        <a class="nav-link" th:href="@{/users}">
-            <i class="fas fa-fw fa-users"></i>
-            <span>Người dùng</span>
-        </a>
-    </li>
-
-    <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
 
-    <!-- Sidebar Toggler (Sidebar) -->
+    <!-- Sidebar Toggler -->
     <div class="text-center d-none d-md-inline">
         <button class="rounded-circle border-0" id="sidebarToggle"></button>
     </div>
-
-
 
 </ul>
 </body>

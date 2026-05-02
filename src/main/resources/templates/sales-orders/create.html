@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>TonAdmin - Create Sales Order</title>
+
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/css/custom.css}" rel="stylesheet">
+
+    <style>
+        .sales-order-card {
+            max-width: 1080px;
+        }
+
+        .order-item-row {
+            background: #f8f9fc;
+            border: 1px solid #e3e6f0;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .order-item-index {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #4e73df;
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            flex: 0 0 auto;
+        }
+
+        .remove-item-btn {
+            width: 36px;
+            height: 36px;
+        }
+
+        .help-box {
+            background: #f8f9fc;
+            border-left: 4px solid #4e73df;
+            padding: 12px 14px;
+            border-radius: 8px;
+            color: #5a5c69;
+        }
+
+        .summary-box {
+            background: #ffffff;
+            border: 1px solid #e3e6f0;
+            border-radius: 10px;
+        }
+
+        .summary-final {
+            font-size: 1.15rem;
+        }
+    </style>
+</head>
+
+<body id="page-top">
+
+<div id="wrapper">
+
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <div id="content">
+
+            <div th:replace="~{fragments/topbar :: topbar}"></div>
+
+            <div class="container-fluid">
+
+                <div th:replace="~{fragments/breadcrumb :: breadcrumb(${breadcrumbs})}"></div>
+
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <div>
+                        <h1 class="h3 mb-0 text-gray-800">Tạo đơn bán hàng</h1>
+                        <small class="text-muted">
+                            Tạo đơn, trừ tồn kho và chuyển sang chi tiết đơn để thanh toán
+                        </small>
+                    </div>
+
+                    <a th:href="@{/sales-orders}" class="btn btn-sm btn-light border shadow-sm">
+                        <i class="fas fa-arrow-left"></i>
+                        Quay lại
+                    </a>
+                </div>
+
+                <form th:action="@{/sales-orders/create}"
+                      th:object="${salesOrderRequest}"
+                      method="post">
+
+                    <div class="card shadow mb-4 sales-order-card">
+
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                Thông tin đơn bán
+                            </h6>
+                        </div>
+
+                        <div class="card-body">
+
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>Chi nhánh bán hàng <span class="text-danger">*</span></label>
+
+                                    <!-- ADMIN được chọn chi nhánh -->
+                                    <select th:if="${isAdmin}"
+                                            th:field="*{branchId}"
+                                            class="form-control"
+                                            th:classappend="${#fields.hasErrors('branchId')} ? 'is-invalid'">
+                                        <option value="">-- Chọn chi nhánh --</option>
+                                        <option th:each="branch : ${branches}"
+                                                th:value="${branch.id}"
+                                                th:text="${branch.name}">
+                                        </option>
+                                    </select>
+
+                                    <!-- BRANCH_STAFF chỉ thấy chi nhánh của mình -->
+                                    <div th:if="${!isAdmin}">
+                                        <input type="hidden"
+                                               th:field="*{branchId}"
+                                               th:value="${staffBranch.id}">
+
+                                        <input type="text"
+                                               class="form-control"
+                                               th:value="${staffBranch.name}"
+                                               readonly>
+                                    </div>
+
+                                    <div class="invalid-feedback d-block"
+                                         th:if="${#fields.hasErrors('branchId')}"
+                                         th:errors="*{branchId}">
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-3">
+                                    <label>Tên khách hàng</label>
+                                    <input type="text"
+                                           th:field="*{customerName}"
+                                           class="form-control"
+                                           placeholder="VD: Anh Nam">
+                                </div>
+
+                                <div class="form-group col-md-3">
+                                    <label>Số điện thoại</label>
+                                    <input type="text"
+                                           th:field="*{customerPhone}"
+                                           class="form-control"
+                                           placeholder="VD: 0900000000">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label>Voucher / giảm giá</label>
+                                    <input type="number"
+                                           min="0"
+                                           step="1000"
+                                           th:field="*{discountAmount}"
+                                           id="discountAmount"
+                                           class="form-control"
+                                           placeholder="VD: 500000">
+                                </div>
+
+                                <div class="form-group col-md-8">
+                                    <label>Ghi chú</label>
+                                    <input type="text"
+                                           th:field="*{note}"
+                                           class="form-control"
+                                           placeholder="VD: Khách lấy hàng trong ngày">
+                                </div>
+                            </div>
+
+                            <div class="help-box mb-4">
+                                <i class="fas fa-info-circle text-primary mr-1"></i>
+                                Màn hình này chỉ tạo đơn và trừ kho. Thanh toán sẽ được cập nhật ở trang chi tiết đơn hàng.
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="font-weight-bold text-gray-800 mb-0">
+                                    Sản phẩm bán
+                                </h6>
+
+                                <button type="button" class="btn btn-sm btn-primary" id="addItemBtn">
+                                    <i class="fas fa-plus"></i>
+                                    Thêm sản phẩm
+                                </button>
+                            </div>
+
+                            <div th:if="${#fields.hasErrors('items')}" class="alert alert-danger">
+                                <span th:errors="*{items}"></span>
+                            </div>
+
+                            <div id="orderItemsList">
+
+                                <div th:each="item, stat : *{items}" class="order-item-row">
+
+                                    <div class="d-flex align-items-start">
+                                        <div class="order-item-index mr-3 item-index"
+                                             th:text="${stat.index + 1}">
+                                            1
+                                        </div>
+
+                                        <div class="flex-grow-1">
+                                            <div class="form-row align-items-start">
+
+                                                <div class="form-group col-md-8 mb-md-0">
+                                                    <label>Sản phẩm <span class="text-danger">*</span></label>
+                                                    <select th:field="*{items[__${stat.index}__].productId}"
+                                                            class="form-control product-select"
+                                                            th:classappend="${#fields.hasErrors('items[' + stat.index + '].productId')} ? 'is-invalid'">
+                                                        <option value="">-- Chọn sản phẩm --</option>
+                                                        <option th:each="product : ${products}"
+                                                                th:value="${product.id}"
+                                                                th:data-price="${product.sellingPrice != null ? product.sellingPrice : 0}"
+                                                                th:text="${product.code + ' - ' + product.name + ' - ' + #numbers.formatDecimal(product.sellingPrice != null ? product.sellingPrice : 0, 0, 'COMMA', 0, 'POINT') + 'đ'}">
+                                                        </option>
+                                                    </select>
+
+                                                    <div class="invalid-feedback d-block"
+                                                         th:if="${#fields.hasErrors('items[' + stat.index + '].productId')}"
+                                                         th:errors="*{items[__${stat.index}__].productId}">
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group col-md-3 mb-md-0">
+                                                    <label>Số lượng <span class="text-danger">*</span></label>
+                                                    <input type="number"
+                                                           step="1"
+                                                           min="1"
+                                                           th:field="*{items[__${stat.index}__].quantity}"
+                                                           class="form-control quantity-input"
+                                                           th:classappend="${#fields.hasErrors('items[' + stat.index + '].quantity')} ? 'is-invalid'"
+                                                           placeholder="VD: 10">
+
+                                                    <div class="invalid-feedback d-block"
+                                                         th:if="${#fields.hasErrors('items[' + stat.index + '].quantity')}"
+                                                         th:errors="*{items[__${stat.index}__].quantity}">
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group col-md-1 mb-0 text-md-right">
+                                                    <label class="d-none d-md-block">&nbsp;</label>
+                                                    <button type="button"
+                                                            class="btn btn-light border text-danger remove-item-btn"
+                                                            title="Xóa dòng này">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="summary-box shadow-sm mt-4 p-3">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Tổng tiền hàng</span>
+                                    <strong id="previewTotalAmount">0đ</strong>
+                                </div>
+
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Giảm giá / voucher</span>
+                                    <strong id="previewDiscountAmount" class="text-warning">0đ</strong>
+                                </div>
+
+                                <hr class="my-2">
+
+                                <div class="d-flex justify-content-between summary-final">
+                                    <span class="font-weight-bold">Thành tiền</span>
+                                    <strong id="previewFinalAmount" class="text-primary">0đ</strong>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a th:href="@{/sales-orders}" class="btn btn-light border">
+                                    Hủy
+                                </a>
+
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i>
+                                    Lưu đơn bán
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        <div th:replace="~{fragments/footer :: footer}"></div>
+
+    </div>
+
+</div>
+
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<div th:replace="~{fragments/logoutmodal :: logoutmodal}"></div>
+<div th:replace="~{fragments/loading :: loading}"></div>
+<div th:replace="~{fragments/toast :: toast}"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const list = document.getElementById("orderItemsList");
+        const addItemBtn = document.getElementById("addItemBtn");
+        const discountInput = document.getElementById("discountAmount");
+
+        const previewTotalAmount = document.getElementById("previewTotalAmount");
+        const previewDiscountAmount = document.getElementById("previewDiscountAmount");
+        const previewFinalAmount = document.getElementById("previewFinalAmount");
+
+        function toNumber(value) {
+            const number = Number(value);
+            return Number.isFinite(number) && number > 0 ? number : 0;
+        }
+
+        function formatMoney(value) {
+            return Math.round(value).toLocaleString("vi-VN") + "đ";
+        }
+
+        function getSelectedPrice(select) {
+            const selectedOption = select.options[select.selectedIndex];
+
+            if (!selectedOption) {
+                return 0;
+            }
+
+            return toNumber(selectedOption.getAttribute("data-price"));
+        }
+
+        function calculatePreview() {
+            let totalAmount = 0;
+
+            list.querySelectorAll(".order-item-row").forEach(function (row) {
+                const productSelect = row.querySelector(".product-select");
+                const quantityInput = row.querySelector(".quantity-input");
+
+                const price = getSelectedPrice(productSelect);
+                const quantity = toNumber(quantityInput.value);
+
+                totalAmount += price * quantity;
+            });
+
+            let discountAmount = toNumber(discountInput.value);
+
+            if (discountAmount > totalAmount) {
+                discountAmount = totalAmount;
+            }
+
+            const finalAmount = totalAmount - discountAmount;
+
+            previewTotalAmount.textContent = formatMoney(totalAmount);
+            previewDiscountAmount.textContent = formatMoney(discountAmount);
+            previewFinalAmount.textContent = formatMoney(finalAmount);
+        }
+
+        function updateRowIndexes() {
+            const rows = list.querySelectorAll(".order-item-row");
+
+            rows.forEach(function (row, index) {
+                const indexBadge = row.querySelector(".item-index");
+                const productSelect = row.querySelector(".product-select");
+                const quantityInput = row.querySelector(".quantity-input");
+
+                indexBadge.textContent = index + 1;
+
+                productSelect.setAttribute("name", "items[" + index + "].productId");
+                productSelect.setAttribute("id", "items" + index + ".productId");
+
+                quantityInput.setAttribute("name", "items[" + index + "].quantity");
+                quantityInput.setAttribute("id", "items" + index + ".quantity");
+            });
+
+            calculatePreview();
+        }
+
+        function refreshRemoveButtons() {
+            const rows = list.querySelectorAll(".order-item-row");
+            const removeButtons = list.querySelectorAll(".remove-item-btn");
+
+            removeButtons.forEach(function (button) {
+                button.disabled = rows.length <= 1;
+            });
+        }
+
+        addItemBtn.addEventListener("click", function () {
+            const firstRow = list.querySelector(".order-item-row");
+            const newRow = firstRow.cloneNode(true);
+
+            const productSelect = newRow.querySelector(".product-select");
+            const quantityInput = newRow.querySelector(".quantity-input");
+
+            productSelect.value = "";
+            quantityInput.value = "1";
+
+            newRow.querySelectorAll(".invalid-feedback").forEach(function (el) {
+                el.remove();
+            });
+
+            newRow.querySelectorAll(".is-invalid").forEach(function (el) {
+                el.classList.remove("is-invalid");
+            });
+
+            list.appendChild(newRow);
+
+            updateRowIndexes();
+            refreshRemoveButtons();
+        });
+
+        list.addEventListener("click", function (event) {
+            const removeButton = event.target.closest(".remove-item-btn");
+
+            if (!removeButton) {
+                return;
+            }
+
+            const rows = list.querySelectorAll(".order-item-row");
+
+            if (rows.length <= 1) {
+                return;
+            }
+
+            removeButton.closest(".order-item-row").remove();
+
+            updateRowIndexes();
+            refreshRemoveButtons();
+        });
+
+        list.addEventListener("change", function (event) {
+            if (event.target.classList.contains("product-select")) {
+                calculatePreview();
+            }
+        });
+
+        list.addEventListener("input", function (event) {
+            if (event.target.classList.contains("quantity-input")) {
+                calculatePreview();
+            }
+        });
+
+        discountInput.addEventListener("input", calculatePreview);
+
+        updateRowIndexes();
+        refreshRemoveButtons();
+        calculatePreview();
+    });
+</script>
+
+</body>
+</html>

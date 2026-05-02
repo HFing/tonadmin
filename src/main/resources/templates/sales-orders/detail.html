@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>TonAdmin - Sales Order Detail</title>
+
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/css/custom.css}" rel="stylesheet">
+
+    <style>
+        .status-panel {
+            border-radius: 10px;
+            border: 1px solid #e3e6f0;
+            background: #fff;
+        }
+
+        .amount-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .amount-final {
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+
+        .danger-zone {
+            border: 1px solid #f5c6cb;
+            border-radius: 10px;
+            background: #fffafa;
+        }
+    </style>
+</head>
+
+<body id="page-top">
+
+<div id="wrapper">
+
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <div id="content">
+
+            <div th:replace="~{fragments/topbar :: topbar}"></div>
+
+            <div class="container-fluid">
+
+                <div th:replace="~{fragments/breadcrumb :: breadcrumb(${breadcrumbs})}"></div>
+
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <div>
+                        <h1 class="h3 mb-0 text-gray-800">
+                            Chi tiết đơn bán
+                            <span th:text="${salesOrder.orderCode}">SO202605020001</span>
+                        </h1>
+                        <small class="text-muted">Thông tin đơn hàng, sản phẩm, thanh toán và hủy đơn</small>
+                    </div>
+
+                    <a th:href="@{/sales-orders}" class="btn btn-sm btn-light border shadow-sm">
+                        <i class="fas fa-arrow-left"></i>
+                        Quay lại
+                    </a>
+                </div>
+
+                <!-- Status Alert -->
+                <div th:if="${salesOrder.status.name() == 'CANCELLED'}"
+                     class="alert alert-danger shadow-sm">
+                    <i class="fas fa-ban"></i>
+                    <strong>Đơn hàng đã bị hủy.</strong>
+                    Tồn kho đã được hoàn lại. Không thể tiếp tục thanh toán đơn này.
+                </div>
+
+                <div th:if="${salesOrder.status.name() != 'CANCELLED' && salesOrder.paymentStatus.name() == 'PAID'}"
+                     class="alert alert-success shadow-sm">
+                    <i class="fas fa-check-circle"></i>
+                    <strong>Đơn hàng đã thanh toán đủ.</strong>
+                    Không còn công nợ cần thu.
+                </div>
+
+                <div th:if="${salesOrder.status.name() != 'CANCELLED' && salesOrder.paymentStatus.name() == 'PARTIALLY_PAID'}"
+                     class="alert alert-warning shadow-sm">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <strong>Đơn hàng đã thanh toán một phần.</strong>
+                    Vẫn còn số tiền cần thu.
+                </div>
+
+                <div th:if="${salesOrder.status.name() != 'CANCELLED' && salesOrder.paymentStatus.name() == 'UNPAID'}"
+                     class="alert alert-secondary shadow-sm">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Đơn hàng chưa thanh toán.</strong>
+                    Vui lòng cập nhật thanh toán nếu khách đã trả tiền.
+                </div>
+
+                <div class="row">
+
+                    <!-- LEFT CONTENT -->
+                    <div class="col-lg-8">
+
+                        <!-- Order Items -->
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                                <h6 class="m-0 font-weight-bold text-primary">Sản phẩm bán</h6>
+
+                                <span class="badge badge-light"
+                                      th:text="${#lists.size(items) + ' sản phẩm'}">
+                                    0 sản phẩm
+                                </span>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                                        <thead class="thead-light">
+                                        <tr>
+                                            <th>Mã sản phẩm</th>
+                                            <th>Tên sản phẩm</th>
+                                            <th class="text-right">Số lượng</th>
+                                            <th class="text-right">Đơn giá</th>
+                                            <th class="text-right">Thành tiền</th>
+                                        </tr>
+                                        </thead>
+
+                                        <tbody>
+                                        <tr th:each="item : ${items}">
+                                            <td>
+                                                <span class="font-weight-bold text-primary"
+                                                      th:text="${item.product != null ? item.product.code : '—'}">
+                                                    TON001
+                                                </span>
+                                            </td>
+
+                                            <td th:text="${item.product != null ? item.product.name : '—'}">
+                                                Tôn lạnh
+                                            </td>
+
+                                            <td class="text-right"
+                                                th:text="${#numbers.formatDecimal(item.quantity, 0, 'COMMA', 2, 'POINT')}">
+                                                0
+                                            </td>
+
+                                            <td class="text-right"
+                                                th:text="${#numbers.formatDecimal(item.sellingPrice, 0, 'COMMA', 0, 'POINT')}">
+                                                0
+                                            </td>
+
+                                            <td class="text-right font-weight-bold"
+                                                th:text="${#numbers.formatDecimal(item.totalPrice, 0, 'COMMA', 0, 'POINT')}">
+                                                0
+                                            </td>
+                                        </tr>
+
+                                        <tr th:if="${#lists.isEmpty(items)}">
+                                            <td colspan="5" class="text-center text-muted">
+                                                Chưa có sản phẩm nào trong đơn.
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Update -->
+                        <div id="payment-section"
+                             class="card shadow mb-4"
+                             th:if="${salesOrder.paymentStatus.name() != 'PAID' && salesOrder.status.name() != 'CANCELLED'}">
+                            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                                <h6 class="m-0 font-weight-bold text-primary">Cập nhật thanh toán</h6>
+
+                                <span class="badge badge-danger"
+                                      th:text="'Còn lại: ' + ${#numbers.formatDecimal(salesOrder.remainingAmount, 0, 'COMMA', 0, 'POINT')}">
+                                    Còn lại: 0
+                                </span>
+                            </div>
+
+                            <div class="card-body">
+                                <form th:action="@{/sales-orders/{id}/payment(id=${salesOrder.id})}"
+                                      th:object="${paymentUpdateRequest}"
+                                      method="post">
+
+                                    <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger">
+                                        <div th:each="err : ${#fields.globalErrors()}" th:text="${err}">
+                                            Lỗi thanh toán
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group col-md-4">
+                                            <label>Phương thức thanh toán</label>
+                                            <select th:field="*{paymentMethod}"
+                                                    class="form-control"
+                                                    th:classappend="${#fields.hasErrors('paymentMethod')} ? 'is-invalid'">
+                                                <option value="">-- Chọn phương thức --</option>
+                                                <option th:each="method : ${paymentMethods}"
+                                                        th:value="${method}"
+                                                        th:text="${method}">
+                                                </option>
+                                            </select>
+
+                                            <div class="invalid-feedback"
+                                                 th:if="${#fields.hasErrors('paymentMethod')}"
+                                                 th:errors="*{paymentMethod}">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group col-md-4">
+                                            <label>Số tiền thanh toán thêm</label>
+                                            <input type="number"
+                                                   min="1"
+                                                   step="1"
+                                                   th:field="*{amount}"
+                                                   th:attr="max=${salesOrder.remainingAmount}"
+                                                   class="form-control"
+                                                   th:classappend="${#fields.hasErrors('amount')} ? 'is-invalid'"
+                                                   placeholder="VD: 500000">
+
+                                            <div class="invalid-feedback"
+                                                 th:if="${#fields.hasErrors('amount')}"
+                                                 th:errors="*{amount}">
+                                            </div>
+
+                                            <small class="text-muted">
+                                                Không nhập lớn hơn số tiền còn lại.
+                                            </small>
+                                        </div>
+
+                                        <div class="form-group col-md-4 d-flex align-items-end">
+                                            <button type="submit" class="btn btn-success btn-block">
+                                                <i class="fas fa-check"></i>
+                                                Xác nhận thanh toán
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="alert alert-light border mb-0">
+                                        <i class="fas fa-qrcode text-primary"></i>
+                                        Chức năng QR sẽ đặt tại đây sau này. Hiện tại có thể xác nhận thanh toán thủ công.
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Payment Paid Message -->
+                        <div class="card shadow mb-4"
+                             th:if="${salesOrder.paymentStatus.name() == 'PAID' && salesOrder.status.name() != 'CANCELLED'}">
+                            <div class="card-body text-center py-4">
+                                <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                                <h5 class="font-weight-bold text-success mb-1">Đơn hàng đã thanh toán đủ</h5>
+                                <p class="text-muted mb-0">Không cần cập nhật thêm thanh toán.</p>
+                            </div>
+                        </div>
+
+                        <!-- Payment History -->
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                                <h6 class="m-0 font-weight-bold text-primary">Lịch sử thanh toán</h6>
+
+                                <span class="badge badge-light"
+                                      th:text="${#lists.size(payments) + ' giao dịch'}">
+                                    0 giao dịch
+                                </span>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                                        <thead class="thead-light">
+                                        <tr>
+                                            <th>Loại</th>
+                                            <th>Phương thức</th>
+                                            <th class="text-right">Số tiền</th>
+                                            <th>Ghi chú</th>
+                                            <th>Thời gian</th>
+                                            <th>Người thao tác</th>
+                                        </tr>
+                                        </thead>
+
+                                        <tbody>
+                                        <tr th:each="payment : ${payments}">
+                                            <td>
+                                                <span th:if="${payment.paymentAction.name() == 'PAYMENT'}"
+                                                      class="badge badge-success">
+                                                    Thu tiền
+                                                </span>
+
+                                                <span th:if="${payment.paymentAction.name() == 'REFUND'}"
+                                                      class="badge badge-warning">
+                                                    Hoàn tiền
+                                                </span>
+                                            </td>
+
+                                            <td th:text="${payment.paymentMethod}">
+                                                CASH
+                                            </td>
+
+                                            <td class="text-right font-weight-bold"
+                                                th:text="${#numbers.formatDecimal(payment.amount, 0, 'COMMA', 0, 'POINT')}">
+                                                0
+                                            </td>
+
+                                            <td th:text="${payment.note != null && !payment.note.isBlank() ? payment.note : '—'}">
+                                                —
+                                            </td>
+
+                                            <td th:text="${payment.createdAt != null ? payment.createdAt : '—'}">
+                                                —
+                                            </td>
+
+                                            <td th:text="${payment.createdBy != null && !payment.createdBy.isBlank() ? payment.createdBy : '—'}">
+                                                —
+                                            </td>
+                                        </tr>
+
+                                        <tr th:if="${#lists.isEmpty(payments)}">
+                                            <td colspan="6" class="text-center text-muted">
+                                                Chưa có lịch sử thanh toán.
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- RIGHT SIDEBAR -->
+                    <div class="col-lg-4">
+
+                        <!-- Order Info -->
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Thông tin đơn</h6>
+                            </div>
+
+                            <div class="card-body">
+
+                                <div class="mb-3">
+                                    <small class="text-muted d-block">Mã đơn</small>
+                                    <span class="font-weight-bold text-primary"
+                                          th:text="${salesOrder.orderCode}">
+                                        SO202605020001
+                                    </span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <small class="text-muted d-block">Chi nhánh</small>
+                                    <span th:text="${salesOrder.branch != null ? salesOrder.branch.name : '—'}">
+                                        Chi nhánh
+                                    </span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <small class="text-muted d-block">Khách hàng</small>
+                                    <span th:text="${salesOrder.customerName != null && !salesOrder.customerName.isBlank() ? salesOrder.customerName : 'Khách lẻ'}">
+                                        Khách lẻ
+                                    </span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <small class="text-muted d-block">Số điện thoại</small>
+                                    <span th:text="${salesOrder.customerPhone != null && !salesOrder.customerPhone.isBlank() ? salesOrder.customerPhone : '—'}">
+                                        —
+                                    </span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <small class="text-muted d-block">Trạng thái đơn</small>
+
+                                    <span th:if="${salesOrder.status.name() == 'COMPLETED'}"
+                                          class="badge badge-success">
+                                        Hoàn tất
+                                    </span>
+
+                                    <span th:if="${salesOrder.status.name() == 'CANCELLED'}"
+                                          class="badge badge-danger">
+                                        Đã hủy
+                                    </span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <small class="text-muted d-block">Thanh toán</small>
+
+                                    <span th:if="${salesOrder.paymentStatus.name() == 'PAID'}"
+                                          class="badge badge-success">
+                                        Đã thanh toán
+                                    </span>
+
+                                    <span th:if="${salesOrder.paymentStatus.name() == 'PARTIALLY_PAID'}"
+                                          class="badge badge-warning">
+                                        Trả một phần
+                                    </span>
+
+                                    <span th:if="${salesOrder.paymentStatus.name() == 'UNPAID'}"
+                                          class="badge badge-secondary">
+                                        Chưa thanh toán
+                                    </span>
+
+                                    <span th:if="${salesOrder.paymentStatus.name() == 'REFUNDED'}"
+                                          class="badge badge-info">
+                                        Đã hoàn tiền
+                                    </span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <small class="text-muted d-block">Phương thức gần nhất</small>
+                                    <span th:text="${salesOrder.paymentMethod != null ? salesOrder.paymentMethod : '—'}">
+                                        CASH
+                                    </span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <small class="text-muted d-block">Ghi chú</small>
+                                    <span th:text="${salesOrder.note != null && !salesOrder.note.isBlank() ? salesOrder.note : '—'}">
+                                        —
+                                    </span>
+                                </div>
+
+                                <div class="mb-3" th:if="${salesOrder.status.name() == 'CANCELLED'}">
+                                    <small class="text-muted d-block">Lý do hủy</small>
+                                    <span class="text-danger"
+                                          th:text="${salesOrder.cancelReason != null && !salesOrder.cancelReason.isBlank() ? salesOrder.cancelReason : '—'}">
+                                        —
+                                    </span>
+                                </div>
+
+                                <hr>
+
+                                <div class="amount-line">
+                                    <span>Tổng tiền hàng</span>
+                                    <strong th:text="${#numbers.formatDecimal(salesOrder.totalAmount, 0, 'COMMA', 0, 'POINT')}">
+                                        0
+                                    </strong>
+                                </div>
+
+                                <div class="amount-line">
+                                    <span>Giảm giá</span>
+                                    <strong class="text-warning"
+                                            th:text="${#numbers.formatDecimal(salesOrder.discountAmount, 0, 'COMMA', 0, 'POINT')}">
+                                        0
+                                    </strong>
+                                </div>
+
+                                <div class="amount-line amount-final">
+                                    <span>Thành tiền</span>
+                                    <strong class="text-primary"
+                                            th:text="${#numbers.formatDecimal(salesOrder.finalAmount, 0, 'COMMA', 0, 'POINT')}">
+                                        0
+                                    </strong>
+                                </div>
+
+                                <hr>
+
+                                <div class="amount-line">
+                                    <span>Đã trả</span>
+                                    <strong class="text-success"
+                                            th:text="${#numbers.formatDecimal(salesOrder.paidAmount, 0, 'COMMA', 0, 'POINT')}">
+                                        0
+                                    </strong>
+                                </div>
+
+                                <div class="amount-line">
+                                    <span>Đã hoàn</span>
+                                    <strong class="text-warning"
+                                            th:text="${#numbers.formatDecimal(salesOrder.refundedAmount, 0, 'COMMA', 0, 'POINT')}">
+                                        0
+                                    </strong>
+                                </div>
+
+                                <div class="amount-line">
+                                    <span>Còn lại</span>
+                                    <strong class="text-danger"
+                                            th:text="${#numbers.formatDecimal(salesOrder.remainingAmount, 0, 'COMMA', 0, 'POINT')}">
+                                        0
+                                    </strong>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- Cancel Order -->
+                        <div class="card shadow mb-4 danger-zone"
+                             th:if="${salesOrder.status.name() != 'CANCELLED'}">
+                            <div class="card-header py-3 bg-white">
+                                <h6 class="m-0 font-weight-bold text-danger">Hủy đơn bán hàng</h6>
+                            </div>
+
+                            <div class="card-body">
+
+                                <div class="alert alert-warning"
+                                     th:if="${salesOrder.paidAmount != null && salesOrder.paidAmount.compareTo(T(java.math.BigDecimal).ZERO) > 0}">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    Đơn này đã thu tiền. Khi hủy, hệ thống sẽ ghi nhận hoàn tiền trong lịch sử thanh toán.
+                                </div>
+
+                                <form th:action="@{/sales-orders/{id}/cancel(id=${salesOrder.id})}"
+                                      th:object="${cancelSalesOrderRequest}"
+                                      method="post"
+                                      onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn này không? Tồn kho sẽ được hoàn lại.');">
+
+                                    <div class="form-group">
+                                        <label>Lý do hủy</label>
+                                        <textarea th:field="*{reason}"
+                                                  class="form-control"
+                                                  rows="3"
+                                                  placeholder="VD: Khách đổi ý, nhập sai đơn..."></textarea>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-danger btn-block">
+                                        <i class="fas fa-times"></i>
+                                        Hủy đơn và hoàn kho
+                                    </button>
+                                </form>
+
+                                <small class="text-muted d-block mt-2">
+                                    Khi hủy đơn, hệ thống sẽ cộng lại tồn kho và ghi lịch sử hoàn hàng.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Cancelled Info -->
+                        <div class="card shadow mb-4"
+                             th:if="${salesOrder.status.name() == 'CANCELLED'}">
+                            <div class="card-body text-center py-4">
+                                <i class="fas fa-ban fa-2x text-danger mb-2"></i>
+                                <h5 class="font-weight-bold text-danger mb-1">Đơn hàng đã hủy</h5>
+                                <p class="text-muted mb-0">Không thể thực hiện thêm thao tác thanh toán hoặc hủy.</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div th:replace="~{fragments/footer :: footer}"></div>
+
+    </div>
+
+</div>
+
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<div th:replace="~{fragments/logoutmodal :: logoutmodal}"></div>
+<div th:replace="~{fragments/loading :: loading}"></div>
+<div th:replace="~{fragments/toast :: toast}"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const params = new URLSearchParams(window.location.search);
+
+        if (params.get("payment") === "true") {
+            const paymentSection = document.getElementById("payment-section");
+
+            if (paymentSection) {
+                paymentSection.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

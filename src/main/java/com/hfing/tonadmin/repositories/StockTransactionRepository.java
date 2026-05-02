@@ -46,4 +46,11 @@ public interface StockTransactionRepository extends JpaRepository<StockTransacti
                     """
     )
     Page<StockTransactionSummaryProjection> findTransactionSummaries(Pageable pageable);
+
+
+    @EntityGraph(attributePaths = {"branch", "product"})
+    List<StockTransaction> findTop5ByOrderByCreatedAtDesc();
+
+    @EntityGraph(attributePaths = {"branch", "product"})
+    List<StockTransaction> findTop5ByBranchIdOrderByCreatedAtDesc(String branchId);
 }

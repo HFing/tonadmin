@@ -29,6 +29,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/login",
+                                "/error",
+                                "/404",
                                 "/css/**",
                                 "/js/**",
                                 "/img/**",
@@ -73,7 +75,7 @@ public class SecurityConfig {
                 )
 
                 .exceptionHandling(ex -> ex
-                        .accessDeniedPage("/404")
+                        .accessDeniedPage("/error")
                 )
 
                 .authenticationProvider(authenticationProvider());
@@ -98,17 +100,11 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    /**
-     * Cần cho maximumSessions(1) hoạt động ổn.
-     */
     @Bean
     public SessionRegistry sessionRegistry() {
         return new SessionRegistryImpl();
     }
 
-    /**
-     * Cần để Spring biết session nào đã bị destroy/logout.
-     */
     @Bean
     public HttpSessionEventPublisher httpSessionEventPublisher() {
         return new HttpSessionEventPublisher();

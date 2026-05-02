@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>TonAdmin - Stock Transfer Detail</title>
+
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/css/custom.css}" rel="stylesheet">
+
+    <style>
+        .info-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+
+<body id="page-top">
+
+<div id="wrapper">
+
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <div id="content">
+
+            <div th:replace="~{fragments/topbar :: topbar}"></div>
+
+            <div class="container-fluid">
+
+                <div th:replace="~{fragments/breadcrumb :: breadcrumb(${breadcrumbs})}"></div>
+
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <div>
+                        <h1 class="h3 mb-0 text-gray-800">
+                            Chi tiết phiếu chuyển
+                            <span th:text="${stockTransfer.transferCode}">TRF202605030001</span>
+                        </h1>
+                        <small class="text-muted">
+                            Thông tin chuyển kho và danh sách sản phẩm đã điều chuyển
+                        </small>
+                    </div>
+
+                    <a th:href="@{/stock-transfers}" class="btn btn-sm btn-light border shadow-sm">
+                        <i class="fas fa-arrow-left"></i>
+                        Quay lại
+                    </a>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-lg-8">
+                        <div class="card shadow mb-4">
+
+                            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                                <h6 class="m-0 font-weight-bold text-primary">Sản phẩm chuyển kho</h6>
+
+                                <span class="badge badge-light"
+                                      th:text="${#lists.size(items) + ' sản phẩm'}">
+                                    0 sản phẩm
+                                </span>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                                        <thead class="thead-light">
+                                        <tr>
+                                            <th>Mã sản phẩm</th>
+                                            <th>Tên sản phẩm</th>
+                                            <th>Danh mục</th>
+                                            <th class="text-right">Số lượng</th>
+                                        </tr>
+                                        </thead>
+
+                                        <tbody>
+                                        <tr th:each="item : ${items}">
+                                            <td>
+                                                <span class="font-weight-bold text-primary"
+                                                      th:text="${item.product != null ? item.product.code : '—'}">
+                                                    TON001
+                                                </span>
+                                            </td>
+
+                                            <td th:text="${item.product != null ? item.product.name : '—'}">
+                                                Tôn lạnh
+                                            </td>
+
+                                            <td th:text="${item.product != null && item.product.category != null ? item.product.category.name : '—'}">
+                                                Danh mục
+                                            </td>
+
+                                            <td class="text-right font-weight-bold"
+                                                th:text="${#numbers.formatDecimal(item.quantity, 0, 'COMMA', 2, 'POINT')}">
+                                                0
+                                            </td>
+                                        </tr>
+
+                                        <tr th:if="${#lists.isEmpty(items)}">
+                                            <td colspan="4" class="text-center text-muted">
+                                                Chưa có sản phẩm nào trong phiếu chuyển.
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Thông tin phiếu chuyển</h6>
+                            </div>
+
+                            <div class="card-body">
+
+                                <div class="mb-3">
+                                    <small class="text-muted d-block">Mã phiếu</small>
+                                    <span class="font-weight-bold text-primary"
+                                          th:text="${stockTransfer.transferCode}">
+                                        TRF202605030001
+                                    </span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <small class="text-muted d-block">Chi nhánh xuất</small>
+                                    <span class="font-weight-bold"
+                                          th:text="${stockTransfer.sourceBranch != null ? stockTransfer.sourceBranch.name : '—'}">
+                                        Kho A
+                                    </span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <small class="text-muted d-block">Chi nhánh nhận</small>
+                                    <span class="font-weight-bold"
+                                          th:text="${stockTransfer.targetBranch != null ? stockTransfer.targetBranch.name : '—'}">
+                                        Kho B
+                                    </span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <small class="text-muted d-block">Ghi chú</small>
+                                    <span th:text="${stockTransfer.note != null && !stockTransfer.note.isBlank() ? stockTransfer.note : '—'}">
+                                        —
+                                    </span>
+                                </div>
+
+                                <hr>
+
+                                <div class="info-line">
+                                    <span>Ngày tạo</span>
+                                    <strong th:text="${stockTransfer.createdAt != null ? #temporals.format(stockTransfer.createdAt, 'dd/MM/yyyy HH:mm') : '—'}">
+                                        —
+                                    </strong>
+                                </div>
+
+                                <div class="info-line">
+                                    <span>Người tạo</span>
+                                    <strong th:text="${stockTransfer.createdBy != null && !stockTransfer.createdBy.isBlank() ? stockTransfer.createdBy : '—'}">
+                                        —
+                                    </strong>
+                                </div>
+
+                                <div class="info-line">
+                                    <span>Cập nhật</span>
+                                    <strong th:text="${stockTransfer.updatedAt != null ? #temporals.format(stockTransfer.updatedAt, 'dd/MM/yyyy HH:mm') : '—'}">
+                                        —
+                                    </strong>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="card shadow mb-4 border-left-info">
+                            <div class="card-body">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                    Ghi nhận lịch sử kho
+                                </div>
+                                <div class="small text-gray-700">
+                                    Phiếu chuyển này đã ghi 2 loại giao dịch kho:
+                                    <strong>TRANSFER_OUT</strong> tại chi nhánh xuất và
+                                    <strong>TRANSFER_IN</strong> tại chi nhánh nhận.
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div th:replace="~{fragments/footer :: footer}"></div>
+
+    </div>
+
+</div>
+
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<div th:replace="~{fragments/logoutmodal :: logoutmodal}"></div>
+<div th:replace="~{fragments/loading :: loading}"></div>
+<div th:replace="~{fragments/toast :: toast}"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+
+</body>
+</html>
