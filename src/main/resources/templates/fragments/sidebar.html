@@ -15,14 +15,14 @@
             <i class="fas fa-warehouse"></i>
         </div>
         <div class="sidebar-brand-text mx-3">
-            TonAdmin
+            TONADMIN
         </div>
     </a>
 
     <hr class="sidebar-divider my-0">
 
     <!-- Dashboard -->
-    <li class="nav-item">
+    <li class="nav-item sidebar-nav-item" data-path="/dashboard">
         <a class="nav-link" th:href="@{/dashboard}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span>
@@ -36,31 +36,44 @@
         Kinh doanh
     </div>
 
-    <li class="nav-item" sec:authorize="hasAnyRole('ADMIN', 'BRANCH_STAFF')">
+    <li class="nav-item sidebar-nav-item"
+        data-path="/sales-orders"
+        sec:authorize="hasAnyRole('ADMIN', 'BRANCH_STAFF')">
         <a class="nav-link" th:href="@{/sales-orders}">
             <i class="fas fa-fw fa-shopping-cart"></i>
             <span>Bán hàng</span>
         </a>
     </li>
 
-    <!-- Products - ADMIN only -->
-    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProducts"
-           aria-expanded="true" aria-controls="collapseProducts">
+    <!-- Products -->
+    <li class="nav-item sidebar-group"
+        data-group="products"
+        sec:authorize="hasRole('ADMIN')">
+        <a class="nav-link collapsed"
+           href="#"
+           data-toggle="collapse"
+           data-target="#collapseProducts"
+           aria-expanded="false"
+           aria-controls="collapseProducts">
             <i class="fas fa-fw fa-boxes"></i>
             <span>Sản phẩm</span>
         </a>
 
-        <div id="collapseProducts" class="collapse" aria-labelledby="headingProducts"
+        <div id="collapseProducts"
+             class="collapse"
              data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Quản lý sản phẩm:</h6>
 
-                <a class="collapse-item" th:href="@{/products}">
+                <a class="collapse-item sidebar-collapse-link"
+                   data-path="/products"
+                   th:href="@{/products}">
                     Sản phẩm
                 </a>
 
-                <a class="collapse-item" th:href="@{/product-categories}">
+                <a class="collapse-item sidebar-collapse-link"
+                   data-path="/product-categories"
+                   th:href="@{/product-categories}">
                     Danh mục sản phẩm
                 </a>
             </div>
@@ -74,38 +87,47 @@
         Kho hàng
     </div>
 
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseInventory"
-           aria-expanded="true" aria-controls="collapseInventory">
+    <li class="nav-item sidebar-group"
+        data-group="inventory"
+        sec:authorize="hasAnyRole('ADMIN', 'BRANCH_STAFF')">
+        <a class="nav-link collapsed"
+           href="#"
+           data-toggle="collapse"
+           data-target="#collapseInventory"
+           aria-expanded="false"
+           aria-controls="collapseInventory">
             <i class="fas fa-fw fa-warehouse"></i>
             <span>Kho hàng</span>
         </a>
 
-        <div id="collapseInventory" class="collapse" aria-labelledby="headingInventory"
+        <div id="collapseInventory"
+             class="collapse"
              data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Quản lý kho:</h6>
 
-                <a class="collapse-item"
-                   sec:authorize="hasAnyRole('ADMIN', 'BRANCH_STAFF')"
+                <a class="collapse-item sidebar-collapse-link"
+                   data-path="/inventories"
                    th:href="@{/inventories}">
                     Tồn kho
                 </a>
 
-                <a class="collapse-item"
-                   sec:authorize="hasRole('ADMIN')"
-                   th:href="@{/inventories/import}">
+                <a class="collapse-item sidebar-collapse-link"
+                   data-path="/inventories/import"
+                   th:href="@{/inventories/import}"
+                   sec:authorize="hasRole('ADMIN')">
                     Nhập kho
                 </a>
 
-                <a class="collapse-item"
-                   sec:authorize="hasRole('ADMIN')"
-                   th:href="@{/stock-transfers}">
+                <a class="collapse-item sidebar-collapse-link"
+                   data-path="/stock-transfers"
+                   th:href="@{/stock-transfers}"
+                   sec:authorize="hasRole('ADMIN')">
                     Chuyển kho
                 </a>
 
-                <a class="collapse-item"
-                   sec:authorize="hasAnyRole('ADMIN', 'BRANCH_STAFF')"
+                <a class="collapse-item sidebar-collapse-link"
+                   data-path="/inventories/transactions"
                    th:href="@{/inventories/transactions}">
                     Lịch sử kho
                 </a>
@@ -115,28 +137,39 @@
 
     <hr class="sidebar-divider" sec:authorize="hasRole('ADMIN')">
 
-    <!-- System - ADMIN only -->
+    <!-- System -->
     <div class="sidebar-heading" sec:authorize="hasRole('ADMIN')">
         Hệ thống
     </div>
 
-    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSystem"
-           aria-expanded="true" aria-controls="collapseSystem">
+    <li class="nav-item sidebar-group"
+        data-group="system"
+        sec:authorize="hasRole('ADMIN')">
+        <a class="nav-link collapsed"
+           href="#"
+           data-toggle="collapse"
+           data-target="#collapseSystem"
+           aria-expanded="false"
+           aria-controls="collapseSystem">
             <i class="fas fa-fw fa-cogs"></i>
             <span>Hệ thống</span>
         </a>
 
-        <div id="collapseSystem" class="collapse" aria-labelledby="headingSystem"
+        <div id="collapseSystem"
+             class="collapse"
              data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Thiết lập hệ thống:</h6>
 
-                <a class="collapse-item" th:href="@{/branches}">
+                <a class="collapse-item sidebar-collapse-link"
+                   data-path="/branches"
+                   th:href="@{/branches}">
                     Chi nhánh
                 </a>
 
-                <a class="collapse-item" th:href="@{/users}">
+                <a class="collapse-item sidebar-collapse-link"
+                   data-path="/users"
+                   th:href="@{/users}">
                     Người dùng
                 </a>
             </div>
@@ -147,8 +180,107 @@
 
     <!-- Sidebar Toggler -->
     <div class="text-center d-none d-md-inline">
-        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+        <button class="rounded-circle border-0"
+                id="sidebarToggle"
+                type="button"></button>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const body = document.body;
+            const sidebar = document.getElementById("accordionSidebar");
+            const sidebarToggle = document.getElementById("sidebarToggle");
+            const sidebarToggleTop = document.getElementById("sidebarToggleTop");
+            const currentPath = window.location.pathname;
+
+            function startsWithPath(path, basePath) {
+                if (!path || !basePath) {
+                    return false;
+                }
+
+                return path === basePath || path.startsWith(basePath + "/");
+            }
+
+            function activateSingleMenu() {
+                document.querySelectorAll(".sidebar-nav-item").forEach(function (item) {
+                    const basePath = item.getAttribute("data-path");
+
+                    if (startsWithPath(currentPath, basePath)) {
+                        item.classList.add("active");
+                    }
+                });
+            }
+
+            function activateCollapseMenu() {
+                document.querySelectorAll(".sidebar-collapse-link").forEach(function (link) {
+                    const basePath = link.getAttribute("data-path");
+
+                    if (!startsWithPath(currentPath, basePath)) {
+                        return;
+                    }
+
+                    link.classList.add("active");
+
+                    const group = link.closest(".sidebar-group");
+                    const collapse = group ? group.querySelector(".collapse") : null;
+                    const toggle = group ? group.querySelector(".nav-link") : null;
+
+                    if (group) {
+                        group.classList.add("active");
+                    }
+
+                    if (collapse && !sidebar.classList.contains("toggled")) {
+                        collapse.classList.add("show");
+                    }
+
+                    if (toggle) {
+                        toggle.classList.remove("collapsed");
+                        toggle.setAttribute("aria-expanded", "true");
+                    }
+                });
+            }
+
+            function applySidebarState() {
+                const collapsed = localStorage.getItem("tonadmin.sidebar.collapsed") === "true";
+
+                if (collapsed) {
+                    body.classList.add("sidebar-toggled");
+                    sidebar.classList.add("toggled");
+
+                    document.querySelectorAll("#accordionSidebar .collapse").forEach(function (collapse) {
+                        collapse.classList.remove("show");
+                    });
+
+                    document.querySelectorAll("#accordionSidebar .nav-link[data-toggle='collapse']").forEach(function (toggle) {
+                        toggle.classList.add("collapsed");
+                        toggle.setAttribute("aria-expanded", "false");
+                    });
+                }
+            }
+
+            function saveSidebarState() {
+                const collapsed = sidebar.classList.contains("toggled");
+                localStorage.setItem("tonadmin.sidebar.collapsed", collapsed ? "true" : "false");
+            }
+
+            applySidebarState();
+
+            activateSingleMenu();
+            activateCollapseMenu();
+
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener("click", function () {
+                    setTimeout(saveSidebarState, 50);
+                });
+            }
+
+            if (sidebarToggleTop) {
+                sidebarToggleTop.addEventListener("click", function () {
+                    setTimeout(saveSidebarState, 50);
+                });
+            }
+        });
+    </script>
 
 </ul>
 </body>
