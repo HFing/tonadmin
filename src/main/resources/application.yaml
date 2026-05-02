@@ -7,15 +7,18 @@ spring:
       enabled: false
 
   datasource:
-    url: jdbc:postgresql://localhost:5433/tonadmin_db
+    url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: ${JPA_DDL_AUTO:update}
+    show-sql: ${JPA_SHOW_SQL:false}
     properties:
       hibernate:
-        format_sql: true
+        format_sql: ${HIBERNATE_FORMAT_SQL:false}
+
+server:
+  port: ${PORT:8080}
