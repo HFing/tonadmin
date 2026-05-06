@@ -26,12 +26,6 @@ public class NotificationStreamServiceImpl implements NotificationStreamService 
         emitter.onTimeout(() -> remove(userId, emitter));
         emitter.onError(error -> remove(userId, emitter));
 
-        try {
-            emitter.send(SseEmitter.event().name("notifications").data("ready"));
-        } catch (IOException ex) {
-            remove(userId, emitter);
-        }
-
         return emitter;
     }
 

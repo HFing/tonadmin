@@ -3,6 +3,8 @@
     const alertCounter = document.getElementById("alertCounter");
     const messageList = document.getElementById("messageList");
     const alertList = document.getElementById("alertList");
+    let refreshInFlight = false;
+    let refreshQueued = false;
 
     if (!messageCounter || !alertCounter || !messageList || !alertList) {
         return;
@@ -73,19 +75,35 @@
     }
 
     async function refreshNotifications() {
-        const response = await fetch("/notifications/summary", {
-            headers: { "Accept": "application/json" }
-        });
-
-        if (!response.ok) {
+        if (refreshInFlight) {
+            refreshQueued = true;
             return;
         }
 
-        const data = await response.json();
-        setCounter(messageCounter, data.messageCount);
-        setCounter(alertCounter, data.alertCount);
-        renderList(messageList, data.messages, "Chưa có thông báo mới.");
-        renderList(alertList, data.alerts, "Chưa có cảnh báo mới.");
+        refreshInFlight = true;
+
+        try {
+            const response = await fetch("/notifications/summary", {
+                headers: { "Accept": "application/json" }
+            });
+
+            if (!response.ok) {
+                return;
+            }
+
+            const data = await response.json();
+            setCounter(messageCounter, data.messageCount);
+            setCounter(alertCounter, data.alertCount);
+            renderList(messageList, data.messages, "Chua co thong bao moi.");
+            renderList(alertList, data.alerts, "Chua co canh bao moi.");
+        } finally {
+            refreshInFlight = false;
+
+            if (refreshQueued) {
+                refreshQueued = false;
+                refreshNotifications().catch(function () {});
+            }
+        }
     }
 
     refreshNotifications().catch(function () {});

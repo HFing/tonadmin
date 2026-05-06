@@ -11,12 +11,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -27,7 +27,6 @@ public class NotificationController {
 
     private final NotificationService notificationService;
     private final NotificationStreamService notificationStreamService;
-    private final CurrentUserService currentUserService;
 
     @GetMapping("/notifications")
     public String index(
@@ -58,7 +57,7 @@ public class NotificationController {
 
     @GetMapping(path = "/notifications/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @org.springframework.web.bind.annotation.ResponseBody
-    public SseEmitter stream() {
-        return notificationStreamService.subscribe(currentUserService.getCurrentUser().getId());
+    public SseEmitter stream(Authentication authentication) {
+        return notificationStreamService.subscribe(authentication.getName());
     }
 }
