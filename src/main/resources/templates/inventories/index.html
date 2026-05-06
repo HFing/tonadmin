@@ -76,29 +76,46 @@
 
                             <div class="form-row align-items-center">
 
-                                <div class="col-md-4 mb-2 mb-md-0">
+                                <div class="col-md-3 mb-2 mb-md-0">
+                                    <input type="text"
+                                           name="keyword"
+                                           class="form-control form-control-sm"
+                                           placeholder="Ma, ten san pham, chi nhanh..."
+                                           th:value="${search.keyword}">
+                                </div>
+
+                                <div class="col-md-3 mb-2 mb-md-0">
                                     <select name="branchId" class="form-control form-control-sm">
                                         <option value="">Tất cả chi nhánh</option>
                                         <option th:each="branch : ${branches}"
                                                 th:value="${branch.id}"
-                                                th:selected="${branch.id == selectedBranchId}"
+                                                th:selected="${branch.id == search.branchId}"
                                                 th:text="${branch.name}">
                                         </option>
                                     </select>
                                 </div>
 
-                                <div class="col-md-5 mb-2 mb-md-0">
+                                <div class="col-md-3 mb-2 mb-md-0">
                                     <select name="productId" class="form-control form-control-sm">
                                         <option value="">Tất cả sản phẩm</option>
                                         <option th:each="product : ${products}"
                                                 th:value="${product.id}"
-                                                th:selected="${product.id == selectedProductId}"
+                                                th:selected="${product.id == search.productId}"
                                                 th:text="${product.code + ' - ' + product.name}">
                                         </option>
                                     </select>
                                 </div>
 
-                                <div class="col-md-3">
+                                <div class="col-md-2 mb-2 mb-md-0">
+                                    <select name="stockStatus" class="form-control form-control-sm">
+                                        <option value="">Tat ca ton kho</option>
+                                        <option value="OUT_OF_STOCK" th:selected="${search.stockStatus != null && search.stockStatus.name() == 'OUT_OF_STOCK'}">Het hang</option>
+                                        <option value="LOW_STOCK" th:selected="${search.stockStatus != null && search.stockStatus.name() == 'LOW_STOCK'}">Sap het</option>
+                                        <option value="NORMAL" th:selected="${search.stockStatus != null && search.stockStatus.name() == 'NORMAL'}">Binh thuong</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-1">
                                     <button type="submit" class="btn btn-sm btn-primary">
                                         <i class="fas fa-filter"></i>
                                         Lọc
@@ -230,7 +247,7 @@
 
                                     <li class="page-item" th:classappend="${inventoryPage.first} ? 'disabled'">
                                         <a class="page-link"
-                                           th:href="@{/inventories(page=${inventoryPage.number - 1}, size=${inventoryPage.size}, branchId=${selectedBranchId}, productId=${selectedProductId})}">
+                                           th:href="@{/inventories(page=${inventoryPage.number - 1}, size=${inventoryPage.size}, keyword=${search.keyword}, branchId=${search.branchId}, productId=${search.productId}, stockStatus=${search.stockStatus})}">
                                             Trước
                                         </a>
                                     </li>
@@ -240,7 +257,7 @@
                                         th:classappend="${pageNumber == inventoryPage.number} ? 'active'">
 
                                         <a class="page-link"
-                                           th:href="@{/inventories(page=${pageNumber}, size=${inventoryPage.size}, branchId=${selectedBranchId}, productId=${selectedProductId})}"
+                                           th:href="@{/inventories(page=${pageNumber}, size=${inventoryPage.size}, keyword=${search.keyword}, branchId=${search.branchId}, productId=${search.productId}, stockStatus=${search.stockStatus})}"
                                            th:text="${pageNumber + 1}">
                                             1
                                         </a>
@@ -248,7 +265,7 @@
 
                                     <li class="page-item" th:classappend="${inventoryPage.last} ? 'disabled'">
                                         <a class="page-link"
-                                           th:href="@{/inventories(page=${inventoryPage.number + 1}, size=${inventoryPage.size}, branchId=${selectedBranchId}, productId=${selectedProductId})}">
+                                           th:href="@{/inventories(page=${inventoryPage.number + 1}, size=${inventoryPage.size}, keyword=${search.keyword}, branchId=${search.branchId}, productId=${search.productId}, stockStatus=${search.stockStatus})}">
                                             Sau
                                         </a>
                                     </li>

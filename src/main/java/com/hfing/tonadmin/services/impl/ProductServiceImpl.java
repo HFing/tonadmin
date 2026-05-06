@@ -1,12 +1,14 @@
 package com.hfing.tonadmin.services.impl;
 
 import com.hfing.tonadmin.dto.request.ProductRequest;
+import com.hfing.tonadmin.dto.request.ProductSearchRequest;
 import com.hfing.tonadmin.entities.Product;
 import com.hfing.tonadmin.entities.ProductCategory;
 import com.hfing.tonadmin.mappers.ProductMapper;
 import com.hfing.tonadmin.repositories.ProductCategoryRepository;
 import com.hfing.tonadmin.repositories.ProductRepository;
 import com.hfing.tonadmin.services.ProductService;
+import com.hfing.tonadmin.specifications.ProductSpecifications;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,8 +39,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<Product> getProducts(Pageable pageable) {
-        return productRepository.findAllByOrderByCreatedAtDesc(pageable);
+    public Page<Product> getProducts(ProductSearchRequest search, Pageable pageable) {
+        ProductSearchRequest safeSearch = search == null
+                ? new ProductSearchRequest(null, null, null)
+                : search;
+
+        return productRepository.findAll(ProductSpecifications.bySearch(safeSearch), pageable);
     }
 
     @Override

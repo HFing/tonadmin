@@ -1,6 +1,7 @@
 package com.hfing.tonadmin.services;
 
 import com.hfing.tonadmin.dto.request.ProductRequest;
+import com.hfing.tonadmin.dto.request.ProductSearchRequest;
 import com.hfing.tonadmin.entities.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,7 +11,7 @@ import java.util.List;
 
 public interface ProductService {
 
-    Page<Product> getProducts(Pageable pageable);
+    Page<Product> getProducts(ProductSearchRequest search, Pageable pageable);
 
     List<Product> getAllProducts();
 

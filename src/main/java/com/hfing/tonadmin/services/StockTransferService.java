@@ -1,5 +1,6 @@
 package com.hfing.tonadmin.services;
 
+import com.hfing.tonadmin.dto.request.StockTransferSearchRequest;
 import com.hfing.tonadmin.dto.request.StockTransferRequest;
 import com.hfing.tonadmin.entities.StockTransfer;
 import com.hfing.tonadmin.entities.StockTransferItem;
@@ -11,7 +12,7 @@ import java.util.List;
 
 public interface StockTransferService {
 
-    Page<StockTransfer> getTransfers(Pageable pageable);
+    Page<StockTransfer> getTransfers(StockTransferSearchRequest search, Pageable pageable);
 
     StockTransfer getTransferById(String id);
 

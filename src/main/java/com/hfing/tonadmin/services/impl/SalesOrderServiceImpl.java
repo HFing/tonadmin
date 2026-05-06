@@ -9,10 +9,13 @@ import com.hfing.tonadmin.dto.request.CancelSalesOrderRequest;
 import com.hfing.tonadmin.dto.request.PaymentUpdateRequest;
 import com.hfing.tonadmin.dto.request.SalesOrderItemRequest;
 import com.hfing.tonadmin.dto.request.SalesOrderRequest;
+import com.hfing.tonadmin.dto.request.SalesOrderSearchRequest;
 import com.hfing.tonadmin.entities.*;
 import com.hfing.tonadmin.repositories.*;
 import com.hfing.tonadmin.services.CurrentUserService;
+import com.hfing.tonadmin.services.NotificationService;
 import com.hfing.tonadmin.services.SalesOrderService;
+import com.hfing.tonadmin.specifications.SalesOrderSpecifications;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,16 +45,13 @@ public class SalesOrderServiceImpl implements SalesOrderService {
     private final InventoryRepository inventoryRepository;
     private final StockTransactionRepository stockTransactionRepository;
     private final CurrentUserService currentUserService;
+    private final NotificationService notificationService;
 
     @Override
-    public Page<SalesOrder> getSalesOrders(Pageable pageable) {
-        if (currentUserService.isAdmin()) {
-            return salesOrderRepository.findAllByOrderByCreatedAtDesc(pageable);
-        }
+    public Page<SalesOrder> getSalesOrders(SalesOrderSearchRequest search, Pageable pageable) {
+        SalesOrderSearchRequest scopedSearch = scopeSearchToCurrentUser(search);
 
-        Branch branch = currentUserService.getCurrentUserBranch();
-
-        return salesOrderRepository.findByBranchIdOrderByCreatedAtDesc(branch.getId(), pageable);
+        return salesOrderRepository.findAll(SalesOrderSpecifications.bySearch(scopedSearch), pageable);
     }
 
     @Override
@@ -174,6 +174,7 @@ public class SalesOrderServiceImpl implements SalesOrderService {
             BigDecimal afterQuantity = beforeQuantity.subtract(saleQuantity);
             inventory.setQuantity(afterQuantity);
             inventoryRepository.save(inventory);
+            notificationService.notifyStockStatusIfNeeded(inventory);
 
             BigDecimal sellingPrice = product.getSellingPrice() == null
                     ? BigDecimal.ZERO
@@ -221,7 +222,10 @@ public class SalesOrderServiceImpl implements SalesOrderService {
                 : PaymentStatus.UNPAID
         );
 
-        return salesOrderRepository.save(salesOrder);
+        SalesOrder savedOrder = salesOrderRepository.save(salesOrder);
+        notificationService.notifySalesOrderCreated(savedOrder);
+
+        return savedOrder;
     }
 
     @Override
@@ -293,6 +297,7 @@ public class SalesOrderServiceImpl implements SalesOrderService {
                 .build());
 
         salesOrderRepository.save(salesOrder);
+        notificationService.notifyPaymentRecorded(salesOrder);
 
         return true;
     }
@@ -391,6 +396,28 @@ public class SalesOrderServiceImpl implements SalesOrderService {
         salesOrderRepository.save(salesOrder);
 
         return true;
+    }
+
+    private SalesOrderSearchRequest scopeSearchToCurrentUser(SalesOrderSearchRequest search) {
+        SalesOrderSearchRequest safeSearch = search == null
+                ? new SalesOrderSearchRequest(null, null, null, null, null, null, null)
+                : search;
+
+        if (currentUserService.isAdmin()) {
+            return safeSearch;
+        }
+
+        Branch branch = currentUserService.getCurrentUserBranch();
+
+        return new SalesOrderSearchRequest(
+                safeSearch.keyword(),
+                branch.getId(),
+                safeSearch.status(),
+                safeSearch.paymentStatus(),
+                safeSearch.debtOnly(),
+                safeSearch.fromDate(),
+                safeSearch.toDate()
+        );
     }
 
     private boolean validateOrderItems(SalesOrderRequest request, BindingResult bindingResult) {

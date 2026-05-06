@@ -3,9 +3,12 @@ package com.hfing.tonadmin.services.impl;
 import com.hfing.tonadmin.common.StockTransactionType;
 import com.hfing.tonadmin.dto.request.StockTransferItemRequest;
 import com.hfing.tonadmin.dto.request.StockTransferRequest;
+import com.hfing.tonadmin.dto.request.StockTransferSearchRequest;
 import com.hfing.tonadmin.entities.*;
 import com.hfing.tonadmin.repositories.*;
+import com.hfing.tonadmin.services.NotificationService;
 import com.hfing.tonadmin.services.StockTransferService;
+import com.hfing.tonadmin.specifications.StockTransferSpecifications;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,10 +36,15 @@ public class StockTransferServiceImpl implements StockTransferService {
     private final ProductRepository productRepository;
     private final InventoryRepository inventoryRepository;
     private final StockTransactionRepository stockTransactionRepository;
+    private final NotificationService notificationService;
 
     @Override
-    public Page<StockTransfer> getTransfers(Pageable pageable) {
-        return stockTransferRepository.findAllByOrderByCreatedAtDesc(pageable);
+    public Page<StockTransfer> getTransfers(StockTransferSearchRequest search, Pageable pageable) {
+        StockTransferSearchRequest safeSearch = search == null
+                ? new StockTransferSearchRequest(null, null, null, null, null)
+                : search;
+
+        return stockTransferRepository.findAll(StockTransferSpecifications.bySearch(safeSearch), pageable);
     }
 
     @Override
@@ -137,6 +145,7 @@ public class StockTransferServiceImpl implements StockTransferService {
             BigDecimal sourceAfter = sourceBefore.subtract(transferQuantity);
             sourceInventory.setQuantity(sourceAfter);
             inventoryRepository.save(sourceInventory);
+            notificationService.notifyStockStatusIfNeeded(sourceInventory);
 
             Inventory targetInventory = inventoryRepository
                     .findWithLockByBranchAndProduct(targetBranch, product)
@@ -150,6 +159,7 @@ public class StockTransferServiceImpl implements StockTransferService {
             BigDecimal targetAfter = targetBefore.add(transferQuantity);
             targetInventory.setQuantity(targetAfter);
             inventoryRepository.save(targetInventory);
+            notificationService.notifyStockStatusIfNeeded(targetInventory);
 
             StockTransferItem transferItem = StockTransferItem.builder()
                     .stockTransfer(stockTransfer)

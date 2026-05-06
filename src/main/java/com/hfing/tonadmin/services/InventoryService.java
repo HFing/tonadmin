@@ -1,6 +1,7 @@
 package com.hfing.tonadmin.services;
 
 import com.hfing.tonadmin.dto.request.InventoryImportRequest;
+import com.hfing.tonadmin.dto.request.InventorySearchRequest;
 import com.hfing.tonadmin.dto.response.StockTransactionSummaryProjection;
 import com.hfing.tonadmin.entities.Inventory;
 import com.hfing.tonadmin.entities.StockTransaction;
@@ -16,7 +17,7 @@ public interface InventoryService {
 
     List<Inventory> getInventories(String branchId, String productId);
 
-    Page<Inventory> getInventoryPage(String branchId, String productId, Pageable pageable);
+    Page<Inventory> getInventoryPage(InventorySearchRequest search, Pageable pageable);
 
     List<StockTransaction> getAllTransactions();
 

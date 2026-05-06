@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>TonAdmin - Notifications</title>
+
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/css/custom.css}" rel="stylesheet">
+</head>
+
+<body id="page-top">
+<div id="wrapper">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <div th:replace="~{fragments/topbar :: topbar}"></div>
+
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <div>
+                        <h1 class="h3 mb-0 text-gray-800">Thông báo</h1>
+                        <small class="text-muted">Danh sách thông báo và cảnh báo của bạn</small>
+                    </div>
+                </div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                        <div>
+                            <a th:href="@{/notifications(channel='MESSAGE')}"
+                               class="btn btn-sm mr-2"
+                               th:classappend="${channel.name() == 'MESSAGE'} ? 'btn-primary' : 'btn-light border'">
+                                Message Center
+                            </a>
+                            <a th:href="@{/notifications(channel='ALERT')}"
+                               class="btn btn-sm"
+                               th:classappend="${channel.name() == 'ALERT'} ? 'btn-primary' : 'btn-light border'">
+                                Alerts Center
+                            </a>
+                        </div>
+
+                        <span class="badge badge-light"
+                              th:text="${notificationPage.totalElements + ' thông báo'}">
+                            0 thông báo
+                        </span>
+                    </div>
+
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            <a th:each="notification : ${notificationPage.content}"
+                               th:href="@{/notifications/{id}/open(id=${notification.id()})}"
+                               class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <div>
+                                        <span class="badge mr-2"
+                                              th:classappend="${notification.read()} ? 'badge-light border' : 'badge-danger'"
+                                              th:text="${notification.read()} ? 'Đã xem' : 'Mới'">
+                                            Mới
+                                        </span>
+                                        <strong th:text="${notification.title()}">Tiêu đề</strong>
+                                    </div>
+                                    <small class="text-muted" th:text="${notification.createdAt()}">—</small>
+                                </div>
+                                <div class="mt-2 text-gray-700" th:text="${notification.message()}">
+                                    Nội dung thông báo
+                                </div>
+                            </a>
+
+                            <div th:if="${#lists.isEmpty(notificationPage.content)}"
+                                 class="text-center text-muted py-5">
+                                Chưa có thông báo nào.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-between align-items-center"
+                         th:if="${notificationPage.totalPages > 0}">
+                        <small class="text-muted"
+                               th:text="'Hiển thị ' + ${#lists.size(notificationPage.content)} + ' / ' + ${notificationPage.totalElements}">
+                            Hiển thị 0 / 0
+                        </small>
+
+                        <nav th:if="${notificationPage.totalPages > 1}">
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item" th:classappend="${notificationPage.first} ? 'disabled'">
+                                    <a class="page-link"
+                                       th:href="@{/notifications(channel=${channel}, page=${notificationPage.number - 1}, size=${notificationPage.size})}">
+                                        Trước
+                                    </a>
+                                </li>
+
+                                <li class="page-item"
+                                    th:each="pageNumber : ${#numbers.sequence(0, notificationPage.totalPages - 1)}"
+                                    th:classappend="${pageNumber == notificationPage.number} ? 'active'">
+                                    <a class="page-link"
+                                       th:href="@{/notifications(channel=${channel}, page=${pageNumber}, size=${notificationPage.size})}"
+                                       th:text="${pageNumber + 1}">
+                                        1
+                                    </a>
+                                </li>
+
+                                <li class="page-item" th:classappend="${notificationPage.last} ? 'disabled'">
+                                    <a class="page-link"
+                                       th:href="@{/notifications(channel=${channel}, page=${notificationPage.number + 1}, size=${notificationPage.size})}">
+                                        Sau
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:replace="~{fragments/footer :: footer}"></div>
+    </div>
+</div>
+
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<div th:replace="~{fragments/logoutmodal :: logoutmodal}"></div>
+<div th:replace="~{fragments/loading :: loading}"></div>
+<div th:replace="~{fragments/toast :: toast}"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+</body>
+</html>

@@ -58,6 +58,74 @@
 
                     <div class="card-body">
 
+                        <form th:action="@{/stock-transfers}" method="get" class="mb-3">
+                            <input type="hidden" name="size" th:value="${transferPage.size}">
+
+                            <div class="form-row">
+                                <div class="form-group col-md-3">
+                                    <label class="small font-weight-bold">Tim kiem</label>
+                                    <input type="text"
+                                           name="keyword"
+                                           class="form-control form-control-sm"
+                                           placeholder="Ma phieu, ghi chu, chi nhanh..."
+                                           th:value="${search.keyword}">
+                                </div>
+
+                                <div class="form-group col-md-2">
+                                    <label class="small font-weight-bold">Chi nhanh xuat</label>
+                                    <select name="sourceBranchId" class="form-control form-control-sm">
+                                        <option value="">Tat ca</option>
+                                        <option th:each="branch : ${branches}"
+                                                th:value="${branch.id}"
+                                                th:selected="${branch.id == search.sourceBranchId}"
+                                                th:text="${branch.name}">
+                                            Branch
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-md-2">
+                                    <label class="small font-weight-bold">Chi nhanh nhan</label>
+                                    <select name="targetBranchId" class="form-control form-control-sm">
+                                        <option value="">Tat ca</option>
+                                        <option th:each="branch : ${branches}"
+                                                th:value="${branch.id}"
+                                                th:selected="${branch.id == search.targetBranchId}"
+                                                th:text="${branch.name}">
+                                            Branch
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-md-2">
+                                    <label class="small font-weight-bold">Tu ngay</label>
+                                    <input type="date"
+                                           name="fromDate"
+                                           class="form-control form-control-sm"
+                                           th:value="${search.fromDate}">
+                                </div>
+
+                                <div class="form-group col-md-2">
+                                    <label class="small font-weight-bold">Den ngay</label>
+                                    <input type="date"
+                                           name="toDate"
+                                           class="form-control form-control-sm"
+                                           th:value="${search.toDate}">
+                                </div>
+
+                                <div class="form-group col-md-1 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary btn-sm mr-2">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                    <a th:href="@{/stock-transfers(size=${transferPage.size})}"
+                                       class="btn btn-light btn-sm"
+                                       title="Xoa loc">
+                                        <i class="fas fa-undo"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+
                         <div class="table-responsive">
                             <table class="table table-bordered table-hover" width="100%" cellspacing="0">
                                 <thead class="thead-light">
@@ -140,7 +208,7 @@
                                     <li class="page-item"
                                         th:classappend="${transferPage.first} ? 'disabled'">
                                         <a class="page-link"
-                                           th:href="@{/stock-transfers(page=${transferPage.number - 1}, size=${transferPage.size})}">
+                                           th:href="@{/stock-transfers(page=${transferPage.number - 1}, size=${transferPage.size}, keyword=${search.keyword}, sourceBranchId=${search.sourceBranchId}, targetBranchId=${search.targetBranchId}, fromDate=${search.fromDate}, toDate=${search.toDate})}">
                                             Trước
                                         </a>
                                     </li>
@@ -150,7 +218,7 @@
                                         th:classappend="${pageNumber == transferPage.number} ? 'active'">
 
                                         <a class="page-link"
-                                           th:href="@{/stock-transfers(page=${pageNumber}, size=${transferPage.size})}"
+                                           th:href="@{/stock-transfers(page=${pageNumber}, size=${transferPage.size}, keyword=${search.keyword}, sourceBranchId=${search.sourceBranchId}, targetBranchId=${search.targetBranchId}, fromDate=${search.fromDate}, toDate=${search.toDate})}"
                                            th:text="${pageNumber + 1}">
                                             1
                                         </a>
@@ -159,7 +227,7 @@
                                     <li class="page-item"
                                         th:classappend="${transferPage.last} ? 'disabled'">
                                         <a class="page-link"
-                                           th:href="@{/stock-transfers(page=${transferPage.number + 1}, size=${transferPage.size})}">
+                                           th:href="@{/stock-transfers(page=${transferPage.number + 1}, size=${transferPage.size}, keyword=${search.keyword}, sourceBranchId=${search.sourceBranchId}, targetBranchId=${search.targetBranchId}, fromDate=${search.fromDate}, toDate=${search.toDate})}">
                                             Sau
                                         </a>
                                     </li>

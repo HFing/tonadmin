@@ -3,6 +3,7 @@ package com.hfing.tonadmin.controllers;
 import com.hfing.tonadmin.common.UnitType;
 import com.hfing.tonadmin.dto.BreadcrumbItem;
 import com.hfing.tonadmin.dto.request.ProductRequest;
+import com.hfing.tonadmin.dto.request.ProductSearchRequest;
 import com.hfing.tonadmin.entities.Product;
 import com.hfing.tonadmin.mappers.ProductMapper;
 import com.hfing.tonadmin.repositories.ProductCategoryRepository;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,14 +38,20 @@ public class ProductController {
     public String index(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String categoryId,
+            @RequestParam(required = false) Boolean active,
             Model model
     ) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        ProductSearchRequest search = new ProductSearchRequest(keyword, categoryId, active);
 
-        Page<Product> productPage = productService.getProducts(pageable);
+        Page<Product> productPage = productService.getProducts(search, pageable);
 
         model.addAttribute("productPage", productPage);
         model.addAttribute("products", productPage.getContent());
+        model.addAttribute("search", search);
+        model.addAttribute("categories", productCategoryRepository.findByActiveTrueOrderByNameAsc());
 
         model.addAttribute("breadcrumbs", List.of(
                 new BreadcrumbItem("Dashboard", "/dashboard"),

@@ -38,7 +38,7 @@
                     </div>
 
                     <a th:href="@{/products/create}"
-                       class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                       class="btn btn-sm btn-primary shadow-sm mt-3 mt-sm-0">
                         <i class="fas fa-plus fa-sm text-white-50"></i>
                         Thêm sản phẩm
                     </a>
@@ -56,6 +56,54 @@
                     </div>
 
                     <div class="card-body">
+
+                        <form th:action="@{/products}" method="get" class="mb-3">
+                            <input type="hidden" name="size" th:value="${productPage.size}">
+
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label class="small font-weight-bold">Tim kiem</label>
+                                    <input type="text"
+                                           name="keyword"
+                                           class="form-control form-control-sm"
+                                           placeholder="Ma, ten, mau, vat lieu..."
+                                           th:value="${search.keyword}">
+                                </div>
+
+                                <div class="form-group col-md-3">
+                                    <label class="small font-weight-bold">Danh muc</label>
+                                    <select name="categoryId" class="form-control form-control-sm">
+                                        <option value="">Tat ca danh muc</option>
+                                        <option th:each="category : ${categories}"
+                                                th:value="${category.id}"
+                                                th:selected="${category.id == search.categoryId}"
+                                                th:text="${category.name}">
+                                            Category
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-md-3">
+                                    <label class="small font-weight-bold">Trang thai</label>
+                                    <select name="active" class="form-control form-control-sm">
+                                        <option value="">Tat ca trang thai</option>
+                                        <option value="true" th:selected="${search.active == true}">Dang ban</option>
+                                        <option value="false" th:selected="${search.active == false}">Da khoa</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-md-2 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary btn-sm mr-2">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                    <a th:href="@{/products(size=${productPage.size})}"
+                                       class="btn btn-light btn-sm"
+                                       title="Xoa loc">
+                                        <i class="fas fa-undo"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
 
                         <div class="table-responsive">
 
@@ -200,7 +248,7 @@
 
                                     <li class="page-item" th:classappend="${productPage.first} ? 'disabled'">
                                         <a class="page-link"
-                                           th:href="@{/products(page=${productPage.number - 1}, size=${productPage.size})}">
+                                           th:href="@{/products(page=${productPage.number - 1}, size=${productPage.size}, keyword=${search.keyword}, categoryId=${search.categoryId}, active=${search.active})}">
                                             Trước
                                         </a>
                                     </li>
@@ -210,7 +258,7 @@
                                         th:classappend="${pageNumber == productPage.number} ? 'active'">
 
                                         <a class="page-link"
-                                           th:href="@{/products(page=${pageNumber}, size=${productPage.size})}"
+                                           th:href="@{/products(page=${pageNumber}, size=${productPage.size}, keyword=${search.keyword}, categoryId=${search.categoryId}, active=${search.active})}"
                                            th:text="${pageNumber + 1}">
                                             1
                                         </a>
@@ -218,7 +266,7 @@
 
                                     <li class="page-item" th:classappend="${productPage.last} ? 'disabled'">
                                         <a class="page-link"
-                                           th:href="@{/products(page=${productPage.number + 1}, size=${productPage.size})}">
+                                           th:href="@{/products(page=${productPage.number + 1}, size=${productPage.size}, keyword=${search.keyword}, categoryId=${search.categoryId}, active=${search.active})}">
                                             Sau
                                         </a>
                                     </li>

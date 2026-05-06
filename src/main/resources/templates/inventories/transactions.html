@@ -78,6 +78,7 @@
                                     <th>Ghi chú</th>
                                     <th style="width: 170px;">Thời gian</th>
                                     <th style="width: 180px;">Người thao tác</th>
+                                    <th style="width: 90px;">Thao tác</th>
                                 </tr>
                                 </thead>
 
@@ -149,10 +150,19 @@
                                     <td th:text="${transaction.createdBy != null && !transaction.createdBy.isBlank() ? transaction.createdBy : '—'}">
                                         admin
                                     </td>
+                                    <td>
+                                        <a th:if="${transaction.transactionType != null && transaction.transactionType.name() == 'IMPORT'}"
+                                           th:href="@{/inventories/imports/{batchCode}/print(batchCode=${transaction.batchCode})}"
+                                           target="_blank"
+                                           class="btn btn-primary btn-sm"
+                                           title="In phiếu nhập">
+                                            <i class="fas fa-print"></i>
+                                        </a>
+                                    </td>
                                 </tr>
 
                                 <tr th:if="${#lists.isEmpty(transactionSummaries)}">
-                                    <td colspan="8" class="text-center text-muted">
+                                    <td colspan="9" class="text-center text-muted">
                                         Chưa có giao dịch kho nào.
                                     </td>
                                 </tr>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="'Phiếu bán hàng - ' + ${salesOrder.orderCode}">Phiếu bán hàng</title>
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/css/print.css}" rel="stylesheet">
+</head>
+<body>
+<div class="print-toolbar">
+    <a th:href="@{/sales-orders/{id}(id=${salesOrder.id})}" class="btn btn-sm btn-light border">
+        <i class="fas fa-arrow-left"></i> Quay lại
+    </a>
+    <button type="button" class="btn btn-sm btn-primary" onclick="window.print()">
+        <i class="fas fa-print"></i> In phiếu
+    </button>
+</div>
+
+<main class="print-page">
+    <section class="print-header">
+        <div>
+            <div class="company-name">TonAdmin</div>
+            <div class="company-meta">Hệ thống quản lý bán hàng và kho tôn</div>
+            <div class="company-meta">Địa chỉ: ................................................</div>
+            <div class="company-meta">Điện thoại: .............................................</div>
+        </div>
+        <div class="document-meta text-right">
+            <div>Ngày in: <strong th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy HH:mm')}">--</strong></div>
+            <div>Người in: <strong>........................</strong></div>
+        </div>
+    </section>
+
+    <h1 class="document-title">Phiếu bán hàng</h1>
+    <div class="document-code" th:text="${salesOrder.orderCode}">SO0001</div>
+
+    <section class="info-grid">
+        <div class="info-item">
+            <span class="info-label">Chi nhánh</span>
+            <span class="info-value" th:text="${salesOrder.branch != null ? salesOrder.branch.name : '—'}">—</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Thời gian tạo</span>
+            <span class="info-value" th:text="${salesOrderCreatedAtText}">—</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Khách hàng</span>
+            <span class="info-value" th:text="${salesOrder.customerName != null && !salesOrder.customerName.isBlank() ? salesOrder.customerName : 'Khách lẻ'}">Khách lẻ</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Điện thoại</span>
+            <span class="info-value" th:text="${salesOrder.customerPhone != null && !salesOrder.customerPhone.isBlank() ? salesOrder.customerPhone : '—'}">—</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Trạng thái</span>
+            <span class="info-value" th:text="${salesOrder.status}">COMPLETED</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Thanh toán</span>
+            <span class="info-value" th:text="${salesOrder.paymentStatus}">UNPAID</span>
+        </div>
+    </section>
+
+    <table class="print-table">
+        <thead>
+        <tr>
+            <th style="width: 44px;">STT</th>
+            <th style="width: 120px;">Mã SP</th>
+            <th>Sản phẩm</th>
+            <th class="text-right" style="width: 90px;">SL</th>
+            <th class="text-right" style="width: 120px;">Đơn giá</th>
+            <th class="text-right" style="width: 130px;">Thành tiền</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item, iter : ${items}">
+            <td class="text-center" th:text="${iter.count}">1</td>
+            <td th:text="${item.product != null ? item.product.code : '—'}">TON001</td>
+            <td th:text="${item.product != null ? item.product.name : '—'}">Sản phẩm</td>
+            <td class="text-right" th:text="${#numbers.formatDecimal(item.quantity, 0, 'COMMA', 2, 'POINT')}">0</td>
+            <td class="text-right" th:text="${#numbers.formatDecimal(item.sellingPrice, 0, 'COMMA', 0, 'POINT')}">0</td>
+            <td class="text-right" th:text="${#numbers.formatDecimal(item.totalPrice, 0, 'COMMA', 0, 'POINT')}">0</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <section class="summary-box">
+        <div class="summary-line">
+            <span>Tổng tiền hàng</span>
+            <strong th:text="${#numbers.formatDecimal(salesOrder.totalAmount, 0, 'COMMA', 0, 'POINT')}">0</strong>
+        </div>
+        <div class="summary-line">
+            <span>Giảm giá</span>
+            <strong th:text="${#numbers.formatDecimal(salesOrder.discountAmount, 0, 'COMMA', 0, 'POINT')}">0</strong>
+        </div>
+        <div class="summary-line summary-final">
+            <span>Thành tiền</span>
+            <strong th:text="${#numbers.formatDecimal(salesOrder.finalAmount, 0, 'COMMA', 0, 'POINT')}">0</strong>
+        </div>
+        <div class="summary-line">
+            <span>Đã thanh toán</span>
+            <strong th:text="${#numbers.formatDecimal(salesOrder.paidAmount, 0, 'COMMA', 0, 'POINT')}">0</strong>
+        </div>
+        <div class="summary-line">
+            <span>Còn lại</span>
+            <strong th:text="${#numbers.formatDecimal(salesOrder.remainingAmount, 0, 'COMMA', 0, 'POINT')}">0</strong>
+        </div>
+    </section>
+
+    <section class="note-box">
+        <strong>Ghi chú:</strong>
+        <span th:text="${salesOrder.note != null && !salesOrder.note.isBlank() ? salesOrder.note : '—'}">—</span>
+    </section>
+
+    <section class="signature-grid">
+        <div>
+            <div class="signature-title">Người lập phiếu</div>
+            <div class="signature-hint">(Ký, ghi rõ họ tên)</div>
+            <div class="signature-space"></div>
+            <div></div>
+        </div>
+        <div>
+            <div class="signature-title">Khách hàng</div>
+            <div class="signature-hint">(Ký, ghi rõ họ tên)</div>
+            <div class="signature-space"></div>
+        </div>
+        <div>
+            <div class="signature-title">Thủ kho</div>
+            <div class="signature-hint">(Ký, ghi rõ họ tên)</div>
+            <div class="signature-space"></div>
+        </div>
+    </section>
+</main>
+</body>
+</html>

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.hfing.tonadmin.common.PaymentStatus;
 import com.hfing.tonadmin.common.SalesOrderStatus;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import java.math.BigDecimal;
@@ -20,6 +21,10 @@ public interface SalesOrderRepository extends JpaRepository<SalesOrder, String>,
 
     @EntityGraph(attributePaths = {"branch"})
     Page<SalesOrder> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
+    @Override
+    @EntityGraph(attributePaths = {"branch"})
+    Page<SalesOrder> findAll(Specification<SalesOrder> specification, Pageable pageable);
 
     @EntityGraph(attributePaths = {"branch"})
     Page<SalesOrder> findByBranchIdOrderByCreatedAtDesc(String branchId, Pageable pageable);

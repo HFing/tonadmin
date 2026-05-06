@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="'Phiếu chuyển kho - ' + ${stockTransfer.transferCode}">Phiếu chuyển kho</title>
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/css/print.css}" rel="stylesheet">
+</head>
+<body>
+<div class="print-toolbar">
+    <a th:href="@{/stock-transfers/{id}(id=${stockTransfer.id})}" class="btn btn-sm btn-light border">
+        <i class="fas fa-arrow-left"></i> Quay lại
+    </a>
+    <button type="button" class="btn btn-sm btn-primary" onclick="window.print()">
+        <i class="fas fa-print"></i> In phiếu
+    </button>
+</div>
+
+<main class="print-page">
+    <section class="print-header">
+        <div>
+            <div class="company-name">TonAdmin</div>
+            <div class="company-meta">Hệ thống quản lý bán hàng và kho tôn</div>
+            <div class="company-meta">Địa chỉ: ................................................</div>
+            <div class="company-meta">Điện thoại: .............................................</div>
+        </div>
+        <div class="document-meta text-right">
+            <div>Ngày in: <strong th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy HH:mm')}">--</strong></div>
+            <div>Người in: <strong>........................</strong></div>
+        </div>
+    </section>
+
+    <h1 class="document-title">Phiếu chuyển kho</h1>
+    <div class="document-code" th:text="${stockTransfer.transferCode}">TRF0001</div>
+
+    <section class="info-grid">
+        <div class="info-item">
+            <span class="info-label">Chi nhánh xuất</span>
+            <span class="info-value" th:text="${stockTransfer.sourceBranch != null ? stockTransfer.sourceBranch.name : '—'}">—</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Chi nhánh nhận</span>
+            <span class="info-value" th:text="${stockTransfer.targetBranch != null ? stockTransfer.targetBranch.name : '—'}">—</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Thời gian tạo</span>
+            <span class="info-value" th:text="${stockTransferCreatedAtText}">—</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Người tạo</span>
+            <span class="info-value">........................</span>
+        </div>
+    </section>
+
+    <table class="print-table">
+        <thead>
+        <tr>
+            <th style="width: 44px;">STT</th>
+            <th style="width: 120px;">Mã SP</th>
+            <th>Sản phẩm</th>
+            <th>Danh mục</th>
+            <th class="text-right" style="width: 110px;">Số lượng</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item, iter : ${items}">
+            <td class="text-center" th:text="${iter.count}">1</td>
+            <td th:text="${item.product != null ? item.product.code : '—'}">TON001</td>
+            <td th:text="${item.product != null ? item.product.name : '—'}">Sản phẩm</td>
+            <td th:text="${item.product != null && item.product.category != null ? item.product.category.name : '—'}">Danh mục</td>
+            <td class="text-right" th:text="${#numbers.formatDecimal(item.quantity, 0, 'COMMA', 2, 'POINT')}">0</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <section class="note-box">
+        <strong>Ghi chú:</strong>
+        <span th:text="${stockTransfer.note != null && !stockTransfer.note.isBlank() ? stockTransfer.note : '—'}">—</span>
+    </section>
+
+    <section class="signature-grid">
+        <div>
+            <div class="signature-title">Người lập phiếu</div>
+            <div class="signature-hint">(Ký, ghi rõ họ tên)</div>
+            <div class="signature-space"></div>
+            <div></div>
+        </div>
+        <div>
+            <div class="signature-title">Bên giao</div>
+            <div class="signature-hint">(Ký, ghi rõ họ tên)</div>
+            <div class="signature-space"></div>
+        </div>
+        <div>
+            <div class="signature-title">Bên nhận</div>
+            <div class="signature-hint">(Ký, ghi rõ họ tên)</div>
+            <div class="signature-space"></div>
+        </div>
+    </section>
+</main>
+</body>
+</html>

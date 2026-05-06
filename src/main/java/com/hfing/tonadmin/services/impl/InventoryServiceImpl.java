@@ -3,6 +3,7 @@ package com.hfing.tonadmin.services.impl;
 import com.hfing.tonadmin.common.StockTransactionType;
 import com.hfing.tonadmin.dto.request.InventoryImportItemRequest;
 import com.hfing.tonadmin.dto.request.InventoryImportRequest;
+import com.hfing.tonadmin.dto.request.InventorySearchRequest;
 import com.hfing.tonadmin.dto.response.StockTransactionSummaryProjection;
 import com.hfing.tonadmin.entities.Branch;
 import com.hfing.tonadmin.entities.Inventory;
@@ -13,6 +14,8 @@ import com.hfing.tonadmin.repositories.InventoryRepository;
 import com.hfing.tonadmin.repositories.ProductRepository;
 import com.hfing.tonadmin.repositories.StockTransactionRepository;
 import com.hfing.tonadmin.services.InventoryService;
+import com.hfing.tonadmin.services.NotificationService;
+import com.hfing.tonadmin.specifications.InventorySpecifications;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,6 +41,7 @@ public class InventoryServiceImpl implements InventoryService {
     private final StockTransactionRepository stockTransactionRepository;
     private final BranchRepository branchRepository;
     private final ProductRepository productRepository;
+    private final NotificationService notificationService;
 
     @Override
     public List<Inventory> getAllInventories() {
@@ -65,27 +69,12 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
-    public Page<Inventory> getInventoryPage(String branchId, String productId, Pageable pageable) {
-        boolean hasBranch = branchId != null && !branchId.isBlank();
-        boolean hasProduct = productId != null && !productId.isBlank();
+    public Page<Inventory> getInventoryPage(InventorySearchRequest search, Pageable pageable) {
+        InventorySearchRequest safeSearch = search == null
+                ? new InventorySearchRequest(null, null, null, null)
+                : search;
 
-        if (hasBranch && hasProduct) {
-            return inventoryRepository.findByBranchIdAndProductIdOrderByProductNameAsc(
-                    branchId,
-                    productId,
-                    pageable
-            );
-        }
-
-        if (hasBranch) {
-            return inventoryRepository.findByBranchIdOrderByProductNameAsc(branchId, pageable);
-        }
-
-        if (hasProduct) {
-            return inventoryRepository.findByProductIdOrderByBranchNameAsc(productId, pageable);
-        }
-
-        return inventoryRepository.findAllByOrderByUpdatedAtDesc(pageable);
+        return inventoryRepository.findAll(InventorySpecifications.bySearch(safeSearch), pageable);
     }
 
     @Override
@@ -176,6 +165,7 @@ public class InventoryServiceImpl implements InventoryService {
 
             inventory.setQuantity(afterQuantity);
             inventoryRepository.save(inventory);
+            notificationService.notifyStockStatusIfNeeded(inventory);
 
             StockTransaction transaction = StockTransaction.builder()
                     .batchCode(batchCode)

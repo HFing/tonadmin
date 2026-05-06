@@ -11,6 +11,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+
 @Controller
 @RequiredArgsConstructor
 public class DashboardController {
@@ -18,6 +21,7 @@ public class DashboardController {
     private final DashboardService dashboardService;
     private final CurrentUserService currentUserService;
     private final BranchRepository branchRepository;
+    private static final ZoneId VIETNAM_ZONE = ZoneId.of("Asia/Ho_Chi_Minh");
 
     @GetMapping({"/", "/dashboard"})
     @PreAuthorize("hasAnyRole('ADMIN', 'BRANCH_STAFF')")
@@ -32,6 +36,7 @@ public class DashboardController {
         model.addAttribute("stats", stats);
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("selectedBranchId", branchId);
+        model.addAttribute("today", LocalDate.now(VIETNAM_ZONE));
 
         if (isAdmin) {
             model.addAttribute("branches", branchRepository.findByActiveTrueOrderByNameAsc());

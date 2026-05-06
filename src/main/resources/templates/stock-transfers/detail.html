@@ -49,10 +49,19 @@
                         </small>
                     </div>
 
-                    <a th:href="@{/stock-transfers}" class="btn btn-sm btn-light border shadow-sm">
-                        <i class="fas fa-arrow-left"></i>
-                        Quay lại
-                    </a>
+                    <div class="mt-3 mt-sm-0">
+                        <a th:href="@{/stock-transfers/{id}/print(id=${stockTransfer.id})}"
+                           target="_blank"
+                           class="btn btn-sm btn-primary shadow-sm mr-2">
+                            <i class="fas fa-print"></i>
+                            In phiếu
+                        </a>
+
+                        <a th:href="@{/stock-transfers}" class="btn btn-sm btn-light border shadow-sm">
+                            <i class="fas fa-arrow-left"></i>
+                            Quay lại
+                        </a>
+                    </div>
                 </div>
 
                 <div class="row">

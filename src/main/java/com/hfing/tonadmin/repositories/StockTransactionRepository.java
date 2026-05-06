@@ -1,6 +1,7 @@
 package com.hfing.tonadmin.repositories;
 
 import com.hfing.tonadmin.dto.response.StockTransactionSummaryProjection;
+import com.hfing.tonadmin.common.StockTransactionType;
 import com.hfing.tonadmin.entities.StockTransaction;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,12 @@ public interface StockTransactionRepository extends JpaRepository<StockTransacti
 
     @EntityGraph(attributePaths = {"branch", "product", "product.category"})
     List<StockTransaction> findByBranchIdAndProductIdOrderByCreatedAtDesc(String branchId, String productId);
+
+    @EntityGraph(attributePaths = {"branch", "product", "product.category"})
+    List<StockTransaction> findByBatchCodeAndTransactionTypeOrderByCreatedAtAsc(
+            String batchCode,
+            StockTransactionType transactionType
+    );
 
     @Query(
             value = """
